@@ -1,0 +1,53 @@
+// The generated lexer module will start with this code
+{
+module GCL1Lexer
+open FSharp.Text.Lexing
+// open the module that defines the tokens
+open GCL1Parser
+}
+
+//macros
+let digit       = ['0'-'9']
+let num         = digit+
+let whitespace  = [' ' '\u00A0' '\r' '\n' '\t']+
+let alfabet     = ['A'-'Z''a'-'z']
+let var         = alfabet(alfabet|digit)*
+
+//tokens
+rule tokenize = parse
+| whitespace        { tokenize lexbuf}
+| '*'                      { TIMES }
+| '/'                      { DIV }
+| '+'                      { PLUS }
+| '-'                      { MINUS }
+| '^'                      { POW }
+| '('                      { LPAR }
+| ')'                      { RPAR }
+| '='                      { EQ }
+| '|'                      { OR }
+| "||"                     { SOR }
+| '&'                      { AND }
+| "&&"                     { SAND }
+| '!'                      { NOT }
+| ":="                     { ASS }
+| '>'                      { GT }
+| '<'                      { LT }
+| ';'                      { SC }
+| "->"                     { AR }
+| "[]"                     { SB }
+| "!="                     { NEQ }
+| "<="                     { LTE }
+| ">="                     { GTE }
+| "true"                   { TRUE }
+| "false"                  { FALSE }
+| "if" whitespace          { IF }
+| "if"                     { FAIL }
+| whitespace"fi"           { FI }
+| "do" whitespace          { DO }
+| "do"                     { FAIL }
+| whitespace "od"          { OD }
+| "skip"                   { SKIP }
+| "-"
+| num                      { NUM(Double.Parse(LexBuffer<_>.LexemeString lexbuf))}
+| var                      { VAR(string(LexBuffer<_>.LexemeString lexbuf)) }
+| eof                      { EOF }

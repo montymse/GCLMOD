@@ -1,0 +1,88 @@
+
+// b ::= true | false | b & b | b | b | b && b | b || b | !b
+// | a = a | a != a | a > a | a >= a | a < a | a <= a | (b)
+
+// a ::= n | x | a + a | a - a | a * a | a / a | a ^ a | (a)
+// GC ::= b -> C | GC [] GC
+//C ::= x := a | A[a] := a | skip | C ; C | if GC fi | do GC od
+
+%{
+    open GCLTypesAST
+%}
+
+%token <float> NUM
+%token <string> VAR
+%token TIMES DIV PLUS MINUS POW LPAR RPAR EQ OR SOR AND SAND NOT ASS GT LT SC AR SB NEQ LTE GTE TRUE FALSE IF FAIL FI DO OD SKIP EOF
+
+//Arithmetic expressions precedence from low to high.
+%left PLUS MINUS
+%left TIMES DIV
+%right POW
+%left UNARY
+
+//Boolean expressions precedence from low to high.
+%left OR SOR
+%left AND SAND
+%left NOT
+//assignment expressions associativity
+%right SB SC
+
+// We declare the initial non-terminal symbol
+%start start
+
+// We specify the return type of each of then non-terminal symbols
+%type <Command> start command
+%type <GuardedCommand> gc
+%type <AExpr> aexpression
+%type <BExpr> bexpression
+
+// Grammar productions
+%%
+
+// The first production in "formal" notation is
+// start -> expression
+// here written:
+start: command EOF             { $1 }
+
+command: 
+      VAR ASS aexpression              { Ass($1,$3) }
+    | SKIP                              { Skip }
+    | command SC command                { Commands($1,$3) }
+    | IF gc FI                          { If($2) }
+    | DO gc OD                          { Do($2) }
+
+// GC ::= b -> C | GC [] GC
+gc: 
+      bexpression AR command            { GC($1,$3) }
+    | gc SB gc                          { GCs($1,$3) }
+
+// a ::= n | x | a + a | a - a | a * a | a / a | a ^ a | (a)
+aexpression:
+      NUM                               { Num($1) }
+    | VAR                              { Var($1) }
+    | aexpression PLUS aexpression      { PlusExpr($1,$3) }
+    | aexpression MINUS aexpression     { MinusExpr($1,$3) }
+    | aexpression TIMES aexpression     { TimesExpr($1,$3) }
+    | aexpression DIV aexpression       { DivExpr($1,$3) }
+    | aexpression POW aexpression       { PowExpr($1,$3) }
+    | MINUS aexpression %prec UNARY     { Neg($2) }
+    | LPAR aexpression RPAR             { $2 }
+
+// b ::= true | false | b & b | b | b | b && b | b || b | !b
+// | a = a | a != a | a > a | a >= a | a < a | a <= a | (b)
+bexpression:
+      TRUE                              { Bool(true) }
+    | FALSE                             { Bool(false) }
+    | bexpression AND bexpression       { And($1,$3) }
+    | bexpression OR bexpression        { Or($1,$3) }
+    | bexpression SAND bexpression      { Sand($1,$3) }
+    | bexpression SOR bexpression       { Sor($1,$3) }
+    | NOT bexpression                   { Not($2) }
+    | aexpression EQ aexpression        { Eq($1,$3) }
+    | aexpression NEQ aexpression       { Neq($1,$3) }
+    | aexpression GT aexpression        { Gt($1,$3) }
+    | aexpression GTE aexpression       { Gte($1,$3) }
+    | aexpression LT aexpression        { Lt($1,$3) }
+    | aexpression LTE aexpression       { Lte($1,$3) }
+    | LPAR bexpression RPAR             { $2 }
+%%
