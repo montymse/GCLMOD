@@ -18,7 +18,7 @@ type token =
   | GT
   | LT
   | SC
-  | AR
+  | ARR
   | SB
   | NEQ
   | LTE
@@ -52,7 +52,7 @@ type tokenId =
     | TOKEN_GT
     | TOKEN_LT
     | TOKEN_SC
-    | TOKEN_AR
+    | TOKEN_ARR
     | TOKEN_SB
     | TOKEN_NEQ
     | TOKEN_LTE

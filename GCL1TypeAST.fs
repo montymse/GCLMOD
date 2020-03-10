@@ -1,6 +1,6 @@
 // This file implements a module where we define a data type "expr"
 // to store represent arithmetic expressions
-module GCLTypesAST
+module GCL1TypeAST
 
 type AExpr = 
     | Num of float
@@ -36,5 +36,8 @@ and GuardedCommand =
     | GC of BExpr*Command
     | GCs of GuardedCommand*GuardedCommand
 
+
+(*
 let lpar leftpar = if leftpar then "(" else ""
 let rpar rightpar = if rightpar then ")" else ""
+*)

@@ -1,8 +1,12 @@
-#r "/home/rasmus/programming/GCL1/FsLexYacc.Runtime.10.0.0/lib/net46/FsLexYacc.Runtime.dll"
+// With this script we implements our Parser
+
+// We import a couple of modules, including the generated lexer and parser
+
+#r "FsLexYacc.Runtime.10.0.0/lib/net46/FsLexYacc.Runtime.dll"
 open FSharp.Text.Lexing
 open System
-#load "GCLTypesAST.fs"
-open GCLTypesAST
+#load "GCL1TypeAST.fs"
+open GCL1TypeAST
 #load "GCL1Parser.fs"
 open GCL1Parser
 #load "GCL1Lexer.fs"
@@ -15,17 +19,18 @@ let parse input =
     try
         let lexbuf = LexBuffer<char>.FromString input
 
-        Some(GCL1Parser.start GCL1Lexer.tokenize lexbuf)
+        Some (GCL1Parser.start GCL1Lexer.tokenize lexbuf)
 
-    with |Failure msg->
+    with |Failure msg-> 
         None
+        
     
 
 let GCL =  
     let file = File.ReadAllText("input.txt")
-    printf "input:\n\n%s\n" file
-    let program : Command option = parse (file)
-    match program with 
-        | None -> printf "ko\n"
+    printf "Input:\n\n%A\n\n" file
+    let programGCL : Command option = parse (file)
+    match programGCL with 
+        | None -> printf "Program rejected\n"
         | Some(p) -> 
-            printf("syntax ok\n")
+            printf("Program accepted\n")

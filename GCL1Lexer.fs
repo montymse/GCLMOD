@@ -221,7 +221,7 @@ and tokenize  lexbuf =
           )
   | 18 -> ( 
 # 36 "GCL1Lexer.fsl"
-                                            AR 
+                                            ARR 
 # 225 "GCL1Lexer.fs"
           )
   | 19 -> ( 

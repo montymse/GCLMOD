@@ -6,14 +6,14 @@ open FSharp.Text.Lexing
 open GCL1Parser
 }
 
-//macros
+//Macros
 let digit       = ['0'-'9']
 let num         = digit+
 let whitespace  = [' ' '\u00A0' '\r' '\n' '\t']+
 let alfabet     = ['A'-'Z''a'-'z']
 let var         = alfabet(alfabet|digit)*
 
-//tokens
+//Tokens
 rule tokenize = parse
 | whitespace        { tokenize lexbuf}
 | '*'                      { TIMES }
@@ -33,7 +33,7 @@ rule tokenize = parse
 | '>'                      { GT }
 | '<'                      { LT }
 | ';'                      { SC }
-| "->"                     { AR }
+| "->"                     { ARR }
 | "[]"                     { SB }
 | "!="                     { NEQ }
 | "<="                     { LTE }

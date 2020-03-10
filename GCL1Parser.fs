@@ -5,7 +5,7 @@ open FSharp.Text.Lexing
 open FSharp.Text.Parsing.ParseHelpers
 # 9 "GCL1Parser.fsp"
 
-    open GCLTypesAST
+    open GCL1TypeAST
 
 # 10 "GCL1Parser.fs"
 // This type is the type of tokens accepted by the parser
@@ -27,7 +27,7 @@ type token =
   | GT
   | LT
   | SC
-  | AR
+  | ARR
   | SB
   | NEQ
   | LTE
@@ -62,7 +62,7 @@ type tokenId =
     | TOKEN_GT
     | TOKEN_LT
     | TOKEN_SC
-    | TOKEN_AR
+    | TOKEN_ARR
     | TOKEN_SB
     | TOKEN_NEQ
     | TOKEN_LTE
@@ -109,7 +109,7 @@ let tagOfToken (t:token) =
   | GT  -> 14 
   | LT  -> 15 
   | SC  -> 16 
-  | AR  -> 17 
+  | ARR  -> 17 
   | SB  -> 18 
   | NEQ  -> 19 
   | LTE  -> 20 
@@ -146,7 +146,7 @@ let tokenTagToTokenId (tokenIdx:int) =
   | 14 -> TOKEN_GT 
   | 15 -> TOKEN_LT 
   | 16 -> TOKEN_SC 
-  | 17 -> TOKEN_AR 
+  | 17 -> TOKEN_ARR 
   | 18 -> TOKEN_SB 
   | 19 -> TOKEN_NEQ 
   | 20 -> TOKEN_LTE 
@@ -226,7 +226,7 @@ let token_to_string (t:token) =
   | GT  -> "GT" 
   | LT  -> "LT" 
   | SC  -> "SC" 
-  | AR  -> "AR" 
+  | ARR  -> "ARR" 
   | SB  -> "SB" 
   | NEQ  -> "NEQ" 
   | LTE  -> "LTE" 
@@ -263,7 +263,7 @@ let _fsyacc_dataOfToken (t:token) =
   | GT  -> (null : System.Object) 
   | LT  -> (null : System.Object) 
   | SC  -> (null : System.Object) 
-  | AR  -> (null : System.Object) 
+  | ARR  -> (null : System.Object) 
   | SB  -> (null : System.Object) 
   | NEQ  -> (null : System.Object) 
   | LTE  -> (null : System.Object) 
@@ -374,7 +374,7 @@ let _fsyacc_reductions ()  =    [|
                 (
                    (
 # 56 "GCL1Parser.fsp"
-                                                               GC(_1,_3) 
+                                                                GC(_1,_3) 
                    )
 # 56 "GCL1Parser.fsp"
                  : GuardedCommand));
