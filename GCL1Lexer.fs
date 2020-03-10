@@ -1,4 +1,4 @@
-# 2 "GCL1Lexer.fsl"
+# 4 "GCL1Lexer.fsl"
  
 module GCL1Lexer
 open FSharp.Text.Lexing
@@ -130,177 +130,177 @@ let rec _fslex_dummy () = _fslex_dummy()
 and tokenize  lexbuf =
   match _fslex_tables.Interpret(0,lexbuf) with
   | 0 -> ( 
-# 18 "GCL1Lexer.fsl"
+# 20 "GCL1Lexer.fsl"
                                      tokenize lexbuf
 # 135 "GCL1Lexer.fs"
           )
   | 1 -> ( 
-# 19 "GCL1Lexer.fsl"
+# 21 "GCL1Lexer.fsl"
                                             TIMES 
 # 140 "GCL1Lexer.fs"
           )
   | 2 -> ( 
-# 20 "GCL1Lexer.fsl"
+# 22 "GCL1Lexer.fsl"
                                             DIV 
 # 145 "GCL1Lexer.fs"
           )
   | 3 -> ( 
-# 21 "GCL1Lexer.fsl"
+# 23 "GCL1Lexer.fsl"
                                             PLUS 
 # 150 "GCL1Lexer.fs"
           )
   | 4 -> ( 
-# 22 "GCL1Lexer.fsl"
+# 24 "GCL1Lexer.fsl"
                                             MINUS 
 # 155 "GCL1Lexer.fs"
           )
   | 5 -> ( 
-# 23 "GCL1Lexer.fsl"
+# 25 "GCL1Lexer.fsl"
                                             POW 
 # 160 "GCL1Lexer.fs"
           )
   | 6 -> ( 
-# 24 "GCL1Lexer.fsl"
+# 26 "GCL1Lexer.fsl"
                                             LPAR 
 # 165 "GCL1Lexer.fs"
           )
   | 7 -> ( 
-# 25 "GCL1Lexer.fsl"
+# 27 "GCL1Lexer.fsl"
                                             RPAR 
 # 170 "GCL1Lexer.fs"
           )
   | 8 -> ( 
-# 26 "GCL1Lexer.fsl"
+# 28 "GCL1Lexer.fsl"
                                             EQ 
 # 175 "GCL1Lexer.fs"
           )
   | 9 -> ( 
-# 27 "GCL1Lexer.fsl"
+# 29 "GCL1Lexer.fsl"
                                             OR 
 # 180 "GCL1Lexer.fs"
           )
   | 10 -> ( 
-# 28 "GCL1Lexer.fsl"
+# 30 "GCL1Lexer.fsl"
                                             SOR 
 # 185 "GCL1Lexer.fs"
           )
   | 11 -> ( 
-# 29 "GCL1Lexer.fsl"
+# 31 "GCL1Lexer.fsl"
                                             AND 
 # 190 "GCL1Lexer.fs"
           )
   | 12 -> ( 
-# 30 "GCL1Lexer.fsl"
+# 32 "GCL1Lexer.fsl"
                                             SAND 
 # 195 "GCL1Lexer.fs"
           )
   | 13 -> ( 
-# 31 "GCL1Lexer.fsl"
+# 33 "GCL1Lexer.fsl"
                                             NOT 
 # 200 "GCL1Lexer.fs"
           )
   | 14 -> ( 
-# 32 "GCL1Lexer.fsl"
+# 34 "GCL1Lexer.fsl"
                                             ASS 
 # 205 "GCL1Lexer.fs"
           )
   | 15 -> ( 
-# 33 "GCL1Lexer.fsl"
+# 35 "GCL1Lexer.fsl"
                                             GT 
 # 210 "GCL1Lexer.fs"
           )
   | 16 -> ( 
-# 34 "GCL1Lexer.fsl"
+# 36 "GCL1Lexer.fsl"
                                             LT 
 # 215 "GCL1Lexer.fs"
           )
   | 17 -> ( 
-# 35 "GCL1Lexer.fsl"
+# 37 "GCL1Lexer.fsl"
                                             SC 
 # 220 "GCL1Lexer.fs"
           )
   | 18 -> ( 
-# 36 "GCL1Lexer.fsl"
+# 38 "GCL1Lexer.fsl"
                                             ARR 
 # 225 "GCL1Lexer.fs"
           )
   | 19 -> ( 
-# 37 "GCL1Lexer.fsl"
+# 39 "GCL1Lexer.fsl"
                                             SB 
 # 230 "GCL1Lexer.fs"
           )
   | 20 -> ( 
-# 38 "GCL1Lexer.fsl"
+# 40 "GCL1Lexer.fsl"
                                             NEQ 
 # 235 "GCL1Lexer.fs"
           )
   | 21 -> ( 
-# 39 "GCL1Lexer.fsl"
+# 41 "GCL1Lexer.fsl"
                                             LTE 
 # 240 "GCL1Lexer.fs"
           )
   | 22 -> ( 
-# 40 "GCL1Lexer.fsl"
+# 42 "GCL1Lexer.fsl"
                                             GTE 
 # 245 "GCL1Lexer.fs"
           )
   | 23 -> ( 
-# 41 "GCL1Lexer.fsl"
+# 43 "GCL1Lexer.fsl"
                                             TRUE 
 # 250 "GCL1Lexer.fs"
           )
   | 24 -> ( 
-# 42 "GCL1Lexer.fsl"
+# 44 "GCL1Lexer.fsl"
                                             FALSE 
 # 255 "GCL1Lexer.fs"
           )
   | 25 -> ( 
-# 43 "GCL1Lexer.fsl"
+# 45 "GCL1Lexer.fsl"
                                             IF 
 # 260 "GCL1Lexer.fs"
           )
   | 26 -> ( 
-# 44 "GCL1Lexer.fsl"
+# 46 "GCL1Lexer.fsl"
                                             FAIL 
 # 265 "GCL1Lexer.fs"
           )
   | 27 -> ( 
-# 45 "GCL1Lexer.fsl"
+# 47 "GCL1Lexer.fsl"
                                             FI 
 # 270 "GCL1Lexer.fs"
           )
   | 28 -> ( 
-# 46 "GCL1Lexer.fsl"
+# 48 "GCL1Lexer.fsl"
                                             DO 
 # 275 "GCL1Lexer.fs"
           )
   | 29 -> ( 
-# 47 "GCL1Lexer.fsl"
+# 49 "GCL1Lexer.fsl"
                                             FAIL 
 # 280 "GCL1Lexer.fs"
           )
   | 30 -> ( 
-# 48 "GCL1Lexer.fsl"
+# 50 "GCL1Lexer.fsl"
                                             OD 
 # 285 "GCL1Lexer.fs"
           )
   | 31 -> ( 
-# 49 "GCL1Lexer.fsl"
+# 51 "GCL1Lexer.fsl"
                                             SKIP 
 # 290 "GCL1Lexer.fs"
           )
   | 32 -> ( 
-# 51 "GCL1Lexer.fsl"
+# 53 "GCL1Lexer.fsl"
                                             NUM(Double.Parse(LexBuffer<_>.LexemeString lexbuf))
 # 295 "GCL1Lexer.fs"
           )
   | 33 -> ( 
-# 52 "GCL1Lexer.fsl"
+# 54 "GCL1Lexer.fsl"
                                             VAR(string(LexBuffer<_>.LexemeString lexbuf)) 
 # 300 "GCL1Lexer.fs"
           )
   | 34 -> ( 
-# 53 "GCL1Lexer.fsl"
+# 55 "GCL1Lexer.fsl"
                                             EOF 
 # 305 "GCL1Lexer.fs"
           )

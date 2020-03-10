@@ -1,3 +1,5 @@
+(*Rasmus s164162, Solvi s174391, Muse s194615*)
+
 // With this script we implements our Parser
 
 // We import a couple of modules, including the generated lexer and parser
@@ -16,21 +18,17 @@ open System.IO
 
 let parse input =
 
-    try
-        let lexbuf = LexBuffer<char>.FromString input
+    let lexbuf = LexBuffer<char>.FromString input
 
-        Some (GCL1Parser.start GCL1Lexer.tokenize lexbuf)
+    let res= GCL1Parser.start GCL1Lexer.tokenize lexbuf
 
-    with |Failure msg-> 
-        None
-        
-    
+    res
 
 let GCL =  
-    let file = File.ReadAllText("input.txt")
-    printf "Input:\n\n%A\n\n" file
-    let programGCL : Command option = parse (file)
-    match programGCL with 
-        | None -> printf "Program rejected\n"
-        | Some(p) -> 
-            printf("Program accepted\n")
+    let input = File.ReadAllText("TestFile.txt")
+    try
+       printf "Input program:\n\n%A\n\n" input
+       let programGCL  = parse (input)
+       printf "Program accepted\n"
+    with err -> 
+        printf "Program rejected\n"
