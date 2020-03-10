@@ -16,6 +16,8 @@ open GCL1Lexer
 
 open System.IO
 
+
+// The parser 
 let parse input =
 
     let lexbuf = LexBuffer<char>.FromString input
@@ -24,11 +26,25 @@ let parse input =
 
     res
 
+///<summary>
+/// The function GCL implements the parser and checks the syntax 
+///</summary>
+///<returns>
+/// It either returns 'program rejected' if the syntax is incorrect otherwise 'program accepted'
+///</returns>
+///<remarks>
+/// As input you can either type something into the console by using the command Console.ReadLine()
+/// or use the test file "TestFile.txt" by using the command File.ReadAllText("TestFile.txt")
+/// By default we use Console.ReadLine() 
+///</remarks>
+/// 
 let GCL =  
-    let input = File.ReadAllText("TestFile.txt")
+
+    let input = Console.ReadLine() 
+    //let input = File.ReadAllText("TestFile.txt")
+
     try
-       printf "Input program:\n\n%A\n\n" input
        let programGCL  = parse (input)
-       printf "Program accepted\n"
+       printf "Program accepted!\n"
     with err -> 
-        printf "Program rejected\n"
+        printf "Program rejected!\n"
