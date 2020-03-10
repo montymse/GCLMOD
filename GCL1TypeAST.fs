@@ -38,8 +38,3 @@ and GuardedCommand =
     | GC of BExpr*Command
     | GCs of GuardedCommand*GuardedCommand
 
-
-(*
-let lpar leftpar = if leftpar then "(" else ""
-let rpar rightpar = if rightpar then ")" else ""
-*)
