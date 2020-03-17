@@ -16,7 +16,7 @@ open GCL1Lexer
 
 open System.IO
 
-
+(*
 // The parser 
 let parse input =
 
@@ -25,6 +25,16 @@ let parse input =
     let res= GCL1Parser.start GCL1Lexer.tokenize lexbuf
 
     res
+*)
+let parse input =
+    // translate string into a buffer of characters
+    // translate the buffer into a stream of tokens and parse them
+    try
+        let lexbuf = LexBuffer<char>.FromString input
+        Some(GCL1Parser.start GCL1Lexer.tokenize lexbuf)
+        
+    with |Failure msg->
+        None
 
 ///<summary>
 /// The function GCL implements the parser and checks the syntax 
@@ -38,6 +48,7 @@ let parse input =
 /// By default we use Console.ReadLine() 
 ///</remarks>
 /// 
+(*
 let GCL =  
 
     let input = Console.ReadLine() 
@@ -48,3 +59,17 @@ let GCL =
        printf "Program accepted!\n"
     with err -> 
         printf "Program rejected!\n"
+*)
+
+let GCL =  
+    let file = File.ReadAllText("input.txt")
+    printf "input:\n\n%s\n" file
+    let program : Command option = parse (file)
+    match program with 
+        | None -> printf "ko\n"
+        | Some(p) -> 
+            printf("syntax ok\n")
+            let pg = ProgramGraph p
+            let wr = new System.IO.StreamWriter("graph.gv")
+            pg |> wr.Write
+            wr.Close() 
