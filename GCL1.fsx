@@ -41,9 +41,9 @@ let parse input =
 
 let GCL =  
 
-    //let input = Console.ReadLine() 
-    let input = File.ReadAllText("TestFile1.txt")
-    printf "input:\n\n%s\n" input
+    let input = Console.ReadLine() 
+    //let input = File.ReadAllText("TestFile1.txt")
+    //printf "input:\n\n%s\n" input
 
     try
        let programGCL  = parse (input)
