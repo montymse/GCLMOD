@@ -38,9 +38,9 @@ and GuardedCommand =
     | GC of BExpr*Command
     | GCs of GuardedCommand*GuardedCommand
 
-// Definitions of parentheses used for syntax
-let lpar leftpar = if leftpar then "(" else ""
-let rpar rightpar = if rightpar then ")" else ""
+// Definitions of parentheses used for syntax 
+let lp leftpar = if leftpar then "(" else ""
+let rp rightpar = if rightpar then ")" else ""
 
 // matching for aexpression for graph
 type AExpr with 
@@ -66,12 +66,12 @@ type AExpr with
         match this with
         | Num(f) -> string(f)
         | Var(s) -> s
-        | PlusExpr(e1,e2) -> (lpar (not e1.Atomic)) + e1.ToString + (rpar (not e1.Atomic)) + "+" + (lpar (not e2.Atomic)) +  e2.ToString  + (rpar (not e2.Atomic))
-        | MinusExpr(e1,e2) -> (lpar (not e1.Atomic)) + e1.ToString + (rpar (not e1.Atomic)) + "-" + (lpar (not e2.Atomic)) +  e2.ToString  + (rpar (not e2.Atomic))
-        | TimesExpr(e1,e2) -> (lpar (not e1.Atomic)) + e1.ToString + (rpar (not e1.Atomic)) + "*" + (lpar (not e2.Atomic)) +  e2.ToString  + (rpar (not e2.Atomic))
-        | DivExpr(e1,e2) -> (lpar (not e1.Atomic)) + e1.ToString + (rpar (not e1.Atomic)) + "/" + (lpar (not e2.Atomic)) +  e2.ToString  + (rpar (not e2.Atomic)) 
-        | PowExpr(e1,e2) -> (lpar (not e1.Atomic)) + e1.ToString + (rpar (not e1.Atomic)) + "^" + (lpar (not e2.Atomic)) +  e2.ToString  + (rpar (not e2.Atomic)) 
-        | Neg(e1) -> "-" + (lpar (not e1.Atomic)) + e1.ToString + (rpar (not e1.Atomic))
+        | PlusExpr(e1,e2) -> (lp (not e1.Atomic)) + e1.ToString + (rp (not e1.Atomic)) + "+" + (lp (not e2.Atomic)) +  e2.ToString  + (rp (not e2.Atomic))
+        | MinusExpr(e1,e2) -> (lp (not e1.Atomic)) + e1.ToString + (rp (not e1.Atomic)) + "-" + (lp (not e2.Atomic)) +  e2.ToString  + (rp (not e2.Atomic))
+        | TimesExpr(e1,e2) -> (lp (not e1.Atomic)) + e1.ToString + (rp (not e1.Atomic)) + "*" + (lp (not e2.Atomic)) +  e2.ToString  + (rp (not e2.Atomic))
+        | DivExpr(e1,e2) -> (lp (not e1.Atomic)) + e1.ToString + (rp (not e1.Atomic)) + "/" + (lp (not e2.Atomic)) +  e2.ToString  + (rp (not e2.Atomic)) 
+        | PowExpr(e1,e2) -> (lp (not e1.Atomic)) + e1.ToString + (rp (not e1.Atomic)) + "^" + (lp (not e2.Atomic)) +  e2.ToString  + (rp (not e2.Atomic)) 
+        | Neg(e1) -> "-" + (lp (not e1.Atomic)) + e1.ToString + (rp (not e1.Atomic))
 
 // matching for bexpression for graph
 type BExpr with 
@@ -105,17 +105,17 @@ type BExpr with
     member this.ToString = 
         match this with
         | Bool(b) -> string(b)
-        | And(b1,b2) ->  (lpar (not b1.Atomic)) + b1.ToString + (rpar (not b2.Atomic)) + " & " + (lpar (not b2.Atomic)) + b2.ToString + (rpar (not b2.Atomic))
-        | Or(b1,b2) ->   (lpar (not b1.Atomic)) + b1.ToString + (rpar (not b2.Atomic)) + " | " + (lpar (not b2.Atomic)) + b2.ToString + (rpar (not b2.Atomic))
-        | Sand(b1,b2) -> (lpar (not b1.Atomic)) + b1.ToString + (rpar (not b2.Atomic)) + " && " + (lpar (not b2.Atomic)) + b2.ToString + (rpar (not b2.Atomic))
-        | Sor(b1,b2) ->  (lpar (not b1.Atomic)) + b1.ToString + (rpar (not b2.Atomic)) + " || " + (lpar (not b2.Atomic)) + b2.ToString + (rpar (not b2.Atomic))
-        | Not(b) -> "!"+ (lpar (not b.Atomic)) + b.ToString + (rpar (not b.Atomic))
-        | Eq(a1,a2) ->   (lpar (not a1.Atomic)) + a1.ToString + (rpar (not a2.Atomic)) + " = " + (lpar (not a2.Atomic)) + a2.ToString + (rpar (not a2.Atomic))
-        | Neq(a1,a2) ->  (lpar (not a1.Atomic)) + a1.ToString + (rpar (not a2.Atomic)) + " != " + (lpar (not a2.Atomic)) + a2.ToString + (rpar (not a2.Atomic))
-        | Gt(a1,a2) ->   (lpar (not a1.Atomic)) + a1.ToString + (rpar (not a2.Atomic)) + " > " + (lpar (not a2.Atomic)) + a2.ToString + (rpar (not a2.Atomic))
-        | Gte(a1,a2) ->  (lpar (not a1.Atomic)) + a1.ToString + (rpar (not a2.Atomic)) + " >= " + (lpar (not a2.Atomic)) + a2.ToString + (rpar (not a2.Atomic))
-        | Lt(a1,a2) ->   (lpar (not a1.Atomic)) + a1.ToString + (rpar (not a2.Atomic)) + " < " + (lpar (not a2.Atomic)) + a2.ToString + (rpar (not a2.Atomic))
-        | Lte(a1,a2) ->  (lpar (not a1.Atomic)) + a1.ToString + (rpar (not a2.Atomic)) + " <= " + (lpar (not a2.Atomic)) + a2.ToString + (rpar (not a2.Atomic))
+        | And(b1,b2) ->  (lp (not b1.Atomic)) + b1.ToString + (rp (not b2.Atomic)) + " & " + (lp (not b2.Atomic)) + b2.ToString + (rp (not b2.Atomic))
+        | Or(b1,b2) ->   (lp (not b1.Atomic)) + b1.ToString + (rp (not b2.Atomic)) + " | " + (lp (not b2.Atomic)) + b2.ToString + (rp (not b2.Atomic))
+        | Sand(b1,b2) -> (lp (not b1.Atomic)) + b1.ToString + (rp (not b2.Atomic)) + " && " + (lp (not b2.Atomic)) + b2.ToString + (rp (not b2.Atomic))
+        | Sor(b1,b2) ->  (lp (not b1.Atomic)) + b1.ToString + (rp (not b2.Atomic)) + " || " + (lp (not b2.Atomic)) + b2.ToString + (rp (not b2.Atomic))
+        | Not(b) -> "!"+ (lp (not b.Atomic)) + b.ToString + (rp (not b.Atomic))
+        | Eq(a1,a2) ->   (lp (not a1.Atomic)) + a1.ToString + (rp (not a2.Atomic)) + " = " + (lp (not a2.Atomic)) + a2.ToString + (rp (not a2.Atomic))
+        | Neq(a1,a2) ->  (lp (not a1.Atomic)) + a1.ToString + (rp (not a2.Atomic)) + " != " + (lp (not a2.Atomic)) + a2.ToString + (rp (not a2.Atomic))
+        | Gt(a1,a2) ->   (lp (not a1.Atomic)) + a1.ToString + (rp (not a2.Atomic)) + " > " + (lp (not a2.Atomic)) + a2.ToString + (rp (not a2.Atomic))
+        | Gte(a1,a2) ->  (lp (not a1.Atomic)) + a1.ToString + (rp (not a2.Atomic)) + " >= " + (lp (not a2.Atomic)) + a2.ToString + (rp (not a2.Atomic))
+        | Lt(a1,a2) ->   (lp (not a1.Atomic)) + a1.ToString + (rp (not a2.Atomic)) + " < " + (lp (not a2.Atomic)) + a2.ToString + (rp (not a2.Atomic))
+        | Lte(a1,a2) ->  (lp (not a1.Atomic)) + a1.ToString + (rp (not a2.Atomic)) + " <= " + (lp (not a2.Atomic)) + a2.ToString + (rp (not a2.Atomic))
 
 // noexecute for GuardedCommands
 let rec noexecute = function 
