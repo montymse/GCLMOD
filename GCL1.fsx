@@ -62,20 +62,71 @@ and evalGCend (gc:GuardedCommand) (start:int) (endState:int) =
     | GC (b1,_)        ->  state <- state + 1
                            [start,Boolean(endState,Not(b1))]
 
+///<summary>
+/// Sign analyzer
+/// </summary>
 
+let rec signAnalyzer (x:(string*float) list) (result:(string*string) list)=
+    match x with
+    | (var,op)::xs when op>0.0 -> signAnalyzer xs ((var,"+")::result)
+    | (var,op)::xs when op<0.0 -> signAnalyzer xs ((var,"-")::result)
+    | (var,op)::xs when op=0.0 -> signAnalyzer xs ((var,"0")::result)
+    | _ ->  result
+
+///<summary>
+/// Prints Sign analysis
+/// </summary>
+
+let rec Varlist (result:(string*string) list) n =
+    match result with
+     | (var,sign)::xs -> Varlist xs n@[var]
+     | [] -> n
+and Signlist (result:(string*string) list) m = 
+    match result with
+     | (var,sign)::xs -> Signlist xs m@[sign]
+     | [] -> m
+and printVars (result:(string*string) list) =
+    let r= (Varlist result []) 
+    for elm in r do 
+        printf "%A " elm
+    printfn""
+and printSigns (result:(string*string) list) =
+    let r= (Signlist result []) 
+    for elm in r do 
+        printf "%A " elm
+and printSignLists (results:(int * (string *string) list) list) =
+    match results with
+    | _::(_,result)::xs -> printSigns result
+                           printfn "\n"
+                           printSignLists xs
+
+    | [(_,result)]      -> printSigns result
+                           printfn "\n"
+
+    | []                -> printfn "\n"
+
+
+    
 ///<summary>
 /// The Interpreter function
 ///</summary>
 
-let rec Interpreter (currentNode:int) n (graph:OperationList) (varMap:Map<string,float>) (programSteps:int) =
+let rec Interpreter (currentNode:int) n (graph:OperationList) (varMap:Map<string,float>) (programSteps:int) (signs:(int * (string *string) list) list)  =
+    let st=[(programSteps,signAnalyzer (Map.toList varMap) [])]
+    let str=signAnalyzer (Map.toList varMap) []
     match graph with
-    | (s,op)::_ when n <= 0 -> printfn "%s" ("Ran out of programSteps. Status: " + "\n" + (printVar (Map.toList varMap)))
-    | (s,op)::tail when s <> currentNode -> Interpreter currentNode n tail varMap programSteps
+    | (s,op)::_ when n <= 0 ->  printVars str
+                                printSignLists signs
+                                printfn "%s" ("Ran out of programSteps. Status: " + "\n" + (printVarlist (Map.toList varMap)))                           
+    | (s,op)::tail when s <> currentNode -> Interpreter currentNode n tail varMap programSteps (signs@st)
     | (s,op)::tail when s = currentNode  -> match op with
-                                            | Boolean(s,bx)         -> if GBExpr bx varMap then Interpreter s (n-1) graph varMap programSteps else Interpreter currentNode n tail varMap programSteps
-                                            | Assign(s,(var,ex)) -> Interpreter s (n-1) graph (varMap.Add(var,(GAExpr ex varMap))) programSteps
-                                            | SkipCMD(s)            -> Interpreter s (n-1) graph varMap programSteps
-    | _                                  -> printfn "%s" ("Terminated in " + string(programSteps-n) + "\n" + (printVar (Map.toList varMap)))
+                                            | Boolean(s,bx)         -> if GBExpr bx varMap then Interpreter s (n-1) graph varMap programSteps (signs@st) else Interpreter currentNode n tail varMap programSteps (signs@st)
+                                            | Assign(s,(var,ex)) -> Interpreter s (n-1) graph (varMap.Add(var,(GAExpr ex varMap))) programSteps (signs@st)
+                                            | SkipCMD(s)            -> Interpreter s (n-1) graph varMap programSteps (signs@st)
+    | _                                  ->  printVars str
+                                             printSignLists signs
+                                             printfn "%s" ("Terminated in " + string(programSteps-n) + "\n" + (printVarlist (Map.toList varMap)))
+                                            
 and GAExpr (aexpr:AExpr) (varMap) =
     match aexpr with
     | Var (s)                   -> if varMap.ContainsKey s then Map.find s varMap else failwith (string(s)+" not_found")
@@ -106,9 +157,9 @@ and GBExpr (bexpr:BExpr) varMap =
     | Gte (e1,e2)            -> GAExpr e1 varMap >= GAExpr e2 varMap
     | Lt (e1,e2)            -> GAExpr e1 varMap < GAExpr e2 varMap
     | Lte (e1,e2)            -> GAExpr e1 varMap <= GAExpr e2 varMap
-and printVar list =
+and printVarlist list =
     match list with
-    | (var,value)::tail -> var + "=" + string(value) + "\n" + printVar tail
+    | (var,value)::tail -> var + "=" + string(value) + "\n" + printVarlist tail
     | [] -> ""
 
 
@@ -132,8 +183,8 @@ let GCL =
     printfn"Choose number of programSteps:"
     let programSteps = int (Console.ReadLine())
     
-    //Variable number (IF MORE VARIABLES NEED ADD HERE)  
-    let varMap = Map.empty.Add("x",5.0)
+    //Variable number (IF MORE VARIABLES NEED ADD HERE  )  
+    let varMap = Map.empty.Add("x",-5.0)
 
     printf "\n----------------------------\nInput program:\n\n%s\n----------------------------\n" input
 
@@ -145,7 +196,7 @@ let GCL =
        wr.Write pg
        wr.Close() 
 
-       (Interpreter qi programSteps oplist varMap programSteps)
+       (Interpreter qi programSteps oplist varMap programSteps [])
 
        printf "----------------------------\nProgram accepted!\n----------------------------\n"
 
