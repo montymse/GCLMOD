@@ -5,12 +5,12 @@
 module GCL1TypeAST
 
 type AExpr = 
-    | Num of float
     | Var of string 
-    | PlusExpr of AExpr*AExpr
-    | MinusExpr of AExpr*AExpr
+    | Num of float
     | TimesExpr of AExpr*AExpr
     | DivExpr of AExpr*AExpr
+    | PlusExpr of AExpr*AExpr
+    | MinusExpr of AExpr*AExpr
     | PowExpr of AExpr*AExpr
     | Neg of AExpr
 
@@ -23,8 +23,8 @@ type BExpr =
     | Not of BExpr
     | Eq of AExpr*AExpr
     | Neq of AExpr*AExpr
-    | Gt of AExpr*AExpr
     | Gte of AExpr*AExpr
+    | Gt of AExpr*AExpr
     | Lt of AExpr*AExpr
     | Lte of AExpr*AExpr
 
