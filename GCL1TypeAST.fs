@@ -139,6 +139,7 @@ and GuardedCommandGraph first second n = function
                       let s2,n2 = (GuardedCommandGraph first second (n1) gc2)
                       (s1+s2),n2
 
+
 // header taken from http://www.formalmethods.dk/fm4fun/ (export graph). 
 let header =   "digraph program_graph {rankdir=LR;
 node [shape = circle]; q▷;

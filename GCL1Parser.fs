@@ -10,74 +10,74 @@ open FSharp.Text.Parsing.ParseHelpers
 # 10 "GCL1Parser.fs"
 // This type is the type of tokens accepted by the parser
 type token = 
+  | LPAR
+  | RPAR
+  | EOF
+  | EQ
+  | GT
+  | LT
+  | LTE
+  | GTE
+  | NEQ
+  | TRUE
+  | FALSE
+  | NOT
+  | AND
+  | OR
+  | SOR
+  | SAND
   | TIMES
   | DIV
   | PLUS
   | MINUS
   | POW
-  | LPAR
-  | RPAR
-  | EQ
-  | OR
-  | SOR
-  | AND
-  | SAND
-  | NOT
-  | ASS
-  | GT
-  | LT
-  | SC
+  | UNARY
+  | VAR of (string)
+  | NUM of (float)
   | ARR
   | SB
-  | NEQ
-  | LTE
-  | GTE
-  | TRUE
-  | FALSE
   | IF
-  | FAIL
   | FI
   | DO
   | OD
   | SKIP
-  | EOF
-  | VAR of (string)
-  | NUM of (float)
+  | ASS
+  | SC
 // This type is used to give symbolic names to token indexes, useful for error messages
 type tokenId = 
+    | TOKEN_LPAR
+    | TOKEN_RPAR
+    | TOKEN_EOF
+    | TOKEN_EQ
+    | TOKEN_GT
+    | TOKEN_LT
+    | TOKEN_LTE
+    | TOKEN_GTE
+    | TOKEN_NEQ
+    | TOKEN_TRUE
+    | TOKEN_FALSE
+    | TOKEN_NOT
+    | TOKEN_AND
+    | TOKEN_OR
+    | TOKEN_SOR
+    | TOKEN_SAND
     | TOKEN_TIMES
     | TOKEN_DIV
     | TOKEN_PLUS
     | TOKEN_MINUS
     | TOKEN_POW
-    | TOKEN_LPAR
-    | TOKEN_RPAR
-    | TOKEN_EQ
-    | TOKEN_OR
-    | TOKEN_SOR
-    | TOKEN_AND
-    | TOKEN_SAND
-    | TOKEN_NOT
-    | TOKEN_ASS
-    | TOKEN_GT
-    | TOKEN_LT
-    | TOKEN_SC
+    | TOKEN_UNARY
+    | TOKEN_VAR
+    | TOKEN_NUM
     | TOKEN_ARR
     | TOKEN_SB
-    | TOKEN_NEQ
-    | TOKEN_LTE
-    | TOKEN_GTE
-    | TOKEN_TRUE
-    | TOKEN_FALSE
     | TOKEN_IF
-    | TOKEN_FAIL
     | TOKEN_FI
     | TOKEN_DO
     | TOKEN_OD
     | TOKEN_SKIP
-    | TOKEN_EOF
-    | TOKEN_VAR
-    | TOKEN_NUM
+    | TOKEN_ASS
+    | TOKEN_SC
     | TOKEN_end_of_input
     | TOKEN_error
 // This type is used to give symbolic names to token indexes, useful for error messages
@@ -92,76 +92,76 @@ type nonTerminalId =
 // This function maps tokens to integer indexes
 let tagOfToken (t:token) = 
   match t with
-  | TIMES  -> 0 
-  | DIV  -> 1 
-  | PLUS  -> 2 
-  | MINUS  -> 3 
-  | POW  -> 4 
-  | LPAR  -> 5 
-  | RPAR  -> 6 
-  | EQ  -> 7 
-  | OR  -> 8 
-  | SOR  -> 9 
-  | AND  -> 10 
-  | SAND  -> 11 
-  | NOT  -> 12 
-  | ASS  -> 13 
-  | GT  -> 14 
-  | LT  -> 15 
-  | SC  -> 16 
-  | ARR  -> 17 
-  | SB  -> 18 
-  | NEQ  -> 19 
-  | LTE  -> 20 
-  | GTE  -> 21 
-  | TRUE  -> 22 
-  | FALSE  -> 23 
-  | IF  -> 24 
-  | FAIL  -> 25 
-  | FI  -> 26 
-  | DO  -> 27 
-  | OD  -> 28 
-  | SKIP  -> 29 
-  | EOF  -> 30 
-  | VAR _ -> 31 
-  | NUM _ -> 32 
+  | LPAR  -> 0 
+  | RPAR  -> 1 
+  | EOF  -> 2 
+  | EQ  -> 3 
+  | GT  -> 4 
+  | LT  -> 5 
+  | LTE  -> 6 
+  | GTE  -> 7 
+  | NEQ  -> 8 
+  | TRUE  -> 9 
+  | FALSE  -> 10 
+  | NOT  -> 11 
+  | AND  -> 12 
+  | OR  -> 13 
+  | SOR  -> 14 
+  | SAND  -> 15 
+  | TIMES  -> 16 
+  | DIV  -> 17 
+  | PLUS  -> 18 
+  | MINUS  -> 19 
+  | POW  -> 20 
+  | UNARY  -> 21 
+  | VAR _ -> 22 
+  | NUM _ -> 23 
+  | ARR  -> 24 
+  | SB  -> 25 
+  | IF  -> 26 
+  | FI  -> 27 
+  | DO  -> 28 
+  | OD  -> 29 
+  | SKIP  -> 30 
+  | ASS  -> 31 
+  | SC  -> 32 
 
 // This function maps integer indexes to symbolic token ids
 let tokenTagToTokenId (tokenIdx:int) = 
   match tokenIdx with
-  | 0 -> TOKEN_TIMES 
-  | 1 -> TOKEN_DIV 
-  | 2 -> TOKEN_PLUS 
-  | 3 -> TOKEN_MINUS 
-  | 4 -> TOKEN_POW 
-  | 5 -> TOKEN_LPAR 
-  | 6 -> TOKEN_RPAR 
-  | 7 -> TOKEN_EQ 
-  | 8 -> TOKEN_OR 
-  | 9 -> TOKEN_SOR 
-  | 10 -> TOKEN_AND 
-  | 11 -> TOKEN_SAND 
-  | 12 -> TOKEN_NOT 
-  | 13 -> TOKEN_ASS 
-  | 14 -> TOKEN_GT 
-  | 15 -> TOKEN_LT 
-  | 16 -> TOKEN_SC 
-  | 17 -> TOKEN_ARR 
-  | 18 -> TOKEN_SB 
-  | 19 -> TOKEN_NEQ 
-  | 20 -> TOKEN_LTE 
-  | 21 -> TOKEN_GTE 
-  | 22 -> TOKEN_TRUE 
-  | 23 -> TOKEN_FALSE 
-  | 24 -> TOKEN_IF 
-  | 25 -> TOKEN_FAIL 
-  | 26 -> TOKEN_FI 
-  | 27 -> TOKEN_DO 
-  | 28 -> TOKEN_OD 
-  | 29 -> TOKEN_SKIP 
-  | 30 -> TOKEN_EOF 
-  | 31 -> TOKEN_VAR 
-  | 32 -> TOKEN_NUM 
+  | 0 -> TOKEN_LPAR 
+  | 1 -> TOKEN_RPAR 
+  | 2 -> TOKEN_EOF 
+  | 3 -> TOKEN_EQ 
+  | 4 -> TOKEN_GT 
+  | 5 -> TOKEN_LT 
+  | 6 -> TOKEN_LTE 
+  | 7 -> TOKEN_GTE 
+  | 8 -> TOKEN_NEQ 
+  | 9 -> TOKEN_TRUE 
+  | 10 -> TOKEN_FALSE 
+  | 11 -> TOKEN_NOT 
+  | 12 -> TOKEN_AND 
+  | 13 -> TOKEN_OR 
+  | 14 -> TOKEN_SOR 
+  | 15 -> TOKEN_SAND 
+  | 16 -> TOKEN_TIMES 
+  | 17 -> TOKEN_DIV 
+  | 18 -> TOKEN_PLUS 
+  | 19 -> TOKEN_MINUS 
+  | 20 -> TOKEN_POW 
+  | 21 -> TOKEN_UNARY 
+  | 22 -> TOKEN_VAR 
+  | 23 -> TOKEN_NUM 
+  | 24 -> TOKEN_ARR 
+  | 25 -> TOKEN_SB 
+  | 26 -> TOKEN_IF 
+  | 27 -> TOKEN_FI 
+  | 28 -> TOKEN_DO 
+  | 29 -> TOKEN_OD 
+  | 30 -> TOKEN_SKIP 
+  | 31 -> TOKEN_ASS 
+  | 32 -> TOKEN_SC 
   | 35 -> TOKEN_end_of_input
   | 33 -> TOKEN_error
   | _ -> failwith "tokenTagToTokenId: bad token"
@@ -209,82 +209,82 @@ let _fsyacc_tagOfErrorTerminal = 33
 // This function gets the name of a token as a string
 let token_to_string (t:token) = 
   match t with 
+  | LPAR  -> "LPAR" 
+  | RPAR  -> "RPAR" 
+  | EOF  -> "EOF" 
+  | EQ  -> "EQ" 
+  | GT  -> "GT" 
+  | LT  -> "LT" 
+  | LTE  -> "LTE" 
+  | GTE  -> "GTE" 
+  | NEQ  -> "NEQ" 
+  | TRUE  -> "TRUE" 
+  | FALSE  -> "FALSE" 
+  | NOT  -> "NOT" 
+  | AND  -> "AND" 
+  | OR  -> "OR" 
+  | SOR  -> "SOR" 
+  | SAND  -> "SAND" 
   | TIMES  -> "TIMES" 
   | DIV  -> "DIV" 
   | PLUS  -> "PLUS" 
   | MINUS  -> "MINUS" 
   | POW  -> "POW" 
-  | LPAR  -> "LPAR" 
-  | RPAR  -> "RPAR" 
-  | EQ  -> "EQ" 
-  | OR  -> "OR" 
-  | SOR  -> "SOR" 
-  | AND  -> "AND" 
-  | SAND  -> "SAND" 
-  | NOT  -> "NOT" 
-  | ASS  -> "ASS" 
-  | GT  -> "GT" 
-  | LT  -> "LT" 
-  | SC  -> "SC" 
+  | UNARY  -> "UNARY" 
+  | VAR _ -> "VAR" 
+  | NUM _ -> "NUM" 
   | ARR  -> "ARR" 
   | SB  -> "SB" 
-  | NEQ  -> "NEQ" 
-  | LTE  -> "LTE" 
-  | GTE  -> "GTE" 
-  | TRUE  -> "TRUE" 
-  | FALSE  -> "FALSE" 
   | IF  -> "IF" 
-  | FAIL  -> "FAIL" 
   | FI  -> "FI" 
   | DO  -> "DO" 
   | OD  -> "OD" 
   | SKIP  -> "SKIP" 
-  | EOF  -> "EOF" 
-  | VAR _ -> "VAR" 
-  | NUM _ -> "NUM" 
+  | ASS  -> "ASS" 
+  | SC  -> "SC" 
 
 // This function gets the data carried by a token as an object
 let _fsyacc_dataOfToken (t:token) = 
   match t with 
+  | LPAR  -> (null : System.Object) 
+  | RPAR  -> (null : System.Object) 
+  | EOF  -> (null : System.Object) 
+  | EQ  -> (null : System.Object) 
+  | GT  -> (null : System.Object) 
+  | LT  -> (null : System.Object) 
+  | LTE  -> (null : System.Object) 
+  | GTE  -> (null : System.Object) 
+  | NEQ  -> (null : System.Object) 
+  | TRUE  -> (null : System.Object) 
+  | FALSE  -> (null : System.Object) 
+  | NOT  -> (null : System.Object) 
+  | AND  -> (null : System.Object) 
+  | OR  -> (null : System.Object) 
+  | SOR  -> (null : System.Object) 
+  | SAND  -> (null : System.Object) 
   | TIMES  -> (null : System.Object) 
   | DIV  -> (null : System.Object) 
   | PLUS  -> (null : System.Object) 
   | MINUS  -> (null : System.Object) 
   | POW  -> (null : System.Object) 
-  | LPAR  -> (null : System.Object) 
-  | RPAR  -> (null : System.Object) 
-  | EQ  -> (null : System.Object) 
-  | OR  -> (null : System.Object) 
-  | SOR  -> (null : System.Object) 
-  | AND  -> (null : System.Object) 
-  | SAND  -> (null : System.Object) 
-  | NOT  -> (null : System.Object) 
-  | ASS  -> (null : System.Object) 
-  | GT  -> (null : System.Object) 
-  | LT  -> (null : System.Object) 
-  | SC  -> (null : System.Object) 
+  | UNARY  -> (null : System.Object) 
+  | VAR _fsyacc_x -> Microsoft.FSharp.Core.Operators.box _fsyacc_x 
+  | NUM _fsyacc_x -> Microsoft.FSharp.Core.Operators.box _fsyacc_x 
   | ARR  -> (null : System.Object) 
   | SB  -> (null : System.Object) 
-  | NEQ  -> (null : System.Object) 
-  | LTE  -> (null : System.Object) 
-  | GTE  -> (null : System.Object) 
-  | TRUE  -> (null : System.Object) 
-  | FALSE  -> (null : System.Object) 
   | IF  -> (null : System.Object) 
-  | FAIL  -> (null : System.Object) 
   | FI  -> (null : System.Object) 
   | DO  -> (null : System.Object) 
   | OD  -> (null : System.Object) 
   | SKIP  -> (null : System.Object) 
-  | EOF  -> (null : System.Object) 
-  | VAR _fsyacc_x -> Microsoft.FSharp.Core.Operators.box _fsyacc_x 
-  | NUM _fsyacc_x -> Microsoft.FSharp.Core.Operators.box _fsyacc_x 
+  | ASS  -> (null : System.Object) 
+  | SC  -> (null : System.Object) 
 let _fsyacc_gotos = [| 0us; 65535us; 1us; 65535us; 0us; 1us; 3us; 65535us; 0us; 2us; 10us; 8us; 18us; 9us; 3us; 65535us; 11us; 12us; 14us; 15us; 20us; 19us; 23us; 65535us; 5us; 6us; 11us; 31us; 14us; 31us; 20us; 31us; 38us; 23us; 39us; 24us; 40us; 25us; 41us; 26us; 42us; 27us; 43us; 28us; 44us; 29us; 45us; 30us; 55us; 31us; 56us; 31us; 57us; 31us; 58us; 31us; 59us; 31us; 60us; 32us; 61us; 33us; 62us; 34us; 63us; 35us; 64us; 36us; 65us; 37us; 9us; 65535us; 11us; 17us; 14us; 17us; 20us; 17us; 45us; 54us; 55us; 49us; 56us; 50us; 57us; 51us; 58us; 52us; 59us; 53us; |]
 let _fsyacc_sparseGotoTableRowOffsets = [|0us; 1us; 3us; 7us; 11us; 35us; |]
 let _fsyacc_stateToProdIdxsTableElements = [| 1us; 0us; 1us; 0us; 2us; 1us; 4us; 1us; 1us; 1us; 2us; 1us; 2us; 6us; 2us; 11us; 12us; 13us; 14us; 15us; 1us; 3us; 2us; 4us; 4us; 2us; 4us; 7us; 1us; 4us; 1us; 5us; 2us; 5us; 8us; 1us; 5us; 1us; 6us; 2us; 6us; 8us; 1us; 6us; 5us; 7us; 20us; 21us; 22us; 23us; 1us; 7us; 2us; 8us; 8us; 1us; 8us; 1us; 9us; 1us; 10us; 6us; 11us; 11us; 12us; 13us; 14us; 15us; 6us; 11us; 12us; 12us; 13us; 14us; 15us; 6us; 11us; 12us; 13us; 13us; 14us; 15us; 6us; 11us; 12us; 13us; 14us; 14us; 15us; 6us; 11us; 12us; 13us; 14us; 15us; 15us; 6us; 11us; 12us; 13us; 14us; 15us; 16us; 6us; 11us; 12us; 13us; 14us; 15us; 17us; 12us; 11us; 12us; 13us; 14us; 15us; 17us; 25us; 26us; 27us; 28us; 29us; 30us; 11us; 11us; 12us; 13us; 14us; 15us; 25us; 26us; 27us; 28us; 29us; 30us; 6us; 11us; 12us; 13us; 14us; 15us; 25us; 6us; 11us; 12us; 13us; 14us; 15us; 26us; 6us; 11us; 12us; 13us; 14us; 15us; 27us; 6us; 11us; 12us; 13us; 14us; 15us; 28us; 6us; 11us; 12us; 13us; 14us; 15us; 29us; 6us; 11us; 12us; 13us; 14us; 15us; 30us; 1us; 11us; 1us; 12us; 1us; 13us; 1us; 14us; 1us; 15us; 1us; 16us; 1us; 17us; 2us; 17us; 31us; 1us; 17us; 1us; 18us; 1us; 19us; 5us; 20us; 20us; 21us; 22us; 23us; 5us; 20us; 21us; 21us; 22us; 23us; 5us; 20us; 21us; 22us; 22us; 23us; 5us; 20us; 21us; 22us; 23us; 23us; 5us; 20us; 21us; 22us; 23us; 24us; 5us; 20us; 21us; 22us; 23us; 31us; 1us; 20us; 1us; 21us; 1us; 22us; 1us; 23us; 1us; 24us; 1us; 25us; 1us; 26us; 1us; 27us; 1us; 28us; 1us; 29us; 1us; 30us; 1us; 31us; |]
 let _fsyacc_stateToProdIdxsTableRowOffsets = [|0us; 2us; 4us; 7us; 9us; 11us; 13us; 20us; 22us; 25us; 28us; 30us; 32us; 35us; 37us; 39us; 42us; 44us; 50us; 52us; 55us; 57us; 59us; 61us; 68us; 75us; 82us; 89us; 96us; 103us; 110us; 123us; 135us; 142us; 149us; 156us; 163us; 170us; 177us; 179us; 181us; 183us; 185us; 187us; 189us; 191us; 194us; 196us; 198us; 200us; 206us; 212us; 218us; 224us; 230us; 236us; 238us; 240us; 242us; 244us; 246us; 248us; 250us; 252us; 254us; 256us; 258us; |]
 let _fsyacc_action_rows = 67
-let _fsyacc_actionTableElements = [|4us; 32768us; 24us; 11us; 27us; 14us; 29us; 7us; 31us; 4us; 0us; 49152us; 2us; 32768us; 16us; 10us; 30us; 3us; 0us; 16385us; 1us; 32768us; 13us; 5us; 4us; 32768us; 3us; 43us; 5us; 44us; 31us; 22us; 32us; 21us; 5us; 16386us; 0us; 40us; 1us; 41us; 2us; 38us; 3us; 39us; 4us; 42us; 0us; 16387us; 1us; 16388us; 16us; 10us; 1us; 16391us; 16us; 10us; 4us; 32768us; 24us; 11us; 27us; 14us; 29us; 7us; 31us; 4us; 7us; 32768us; 3us; 43us; 5us; 45us; 12us; 59us; 22us; 47us; 23us; 48us; 31us; 22us; 32us; 21us; 2us; 32768us; 18us; 20us; 26us; 13us; 0us; 16389us; 7us; 32768us; 3us; 43us; 5us; 45us; 12us; 59us; 22us; 47us; 23us; 48us; 31us; 22us; 32us; 21us; 2us; 32768us; 18us; 20us; 28us; 16us; 0us; 16390us; 5us; 32768us; 8us; 56us; 9us; 58us; 10us; 55us; 11us; 57us; 17us; 18us; 4us; 32768us; 24us; 11us; 27us; 14us; 29us; 7us; 31us; 4us; 1us; 16392us; 18us; 20us; 7us; 32768us; 3us; 43us; 5us; 45us; 12us; 59us; 22us; 47us; 23us; 48us; 31us; 22us; 32us; 21us; 0us; 16393us; 0us; 16394us; 3us; 16395us; 0us; 40us; 1us; 41us; 4us; 42us; 3us; 16396us; 0us; 40us; 1us; 41us; 4us; 42us; 1us; 16397us; 4us; 42us; 1us; 16398us; 4us; 42us; 1us; 16399us; 4us; 42us; 0us; 16400us; 6us; 32768us; 0us; 40us; 1us; 41us; 2us; 38us; 3us; 39us; 4us; 42us; 6us; 46us; 12us; 32768us; 0us; 40us; 1us; 41us; 2us; 38us; 3us; 39us; 4us; 42us; 6us; 46us; 7us; 60us; 14us; 62us; 15us; 64us; 19us; 61us; 20us; 65us; 21us; 63us; 11us; 32768us; 0us; 40us; 1us; 41us; 2us; 38us; 3us; 39us; 4us; 42us; 7us; 60us; 14us; 62us; 15us; 64us; 19us; 61us; 20us; 65us; 21us; 63us; 5us; 16409us; 0us; 40us; 1us; 41us; 2us; 38us; 3us; 39us; 4us; 42us; 5us; 16410us; 0us; 40us; 1us; 41us; 2us; 38us; 3us; 39us; 4us; 42us; 5us; 16411us; 0us; 40us; 1us; 41us; 2us; 38us; 3us; 39us; 4us; 42us; 5us; 16412us; 0us; 40us; 1us; 41us; 2us; 38us; 3us; 39us; 4us; 42us; 5us; 16413us; 0us; 40us; 1us; 41us; 2us; 38us; 3us; 39us; 4us; 42us; 5us; 16414us; 0us; 40us; 1us; 41us; 2us; 38us; 3us; 39us; 4us; 42us; 4us; 32768us; 3us; 43us; 5us; 44us; 31us; 22us; 32us; 21us; 4us; 32768us; 3us; 43us; 5us; 44us; 31us; 22us; 32us; 21us; 4us; 32768us; 3us; 43us; 5us; 44us; 31us; 22us; 32us; 21us; 4us; 32768us; 3us; 43us; 5us; 44us; 31us; 22us; 32us; 21us; 4us; 32768us; 3us; 43us; 5us; 44us; 31us; 22us; 32us; 21us; 4us; 32768us; 3us; 43us; 5us; 44us; 31us; 22us; 32us; 21us; 4us; 32768us; 3us; 43us; 5us; 44us; 31us; 22us; 32us; 21us; 7us; 32768us; 3us; 43us; 5us; 45us; 12us; 59us; 22us; 47us; 23us; 48us; 31us; 22us; 32us; 21us; 0us; 16401us; 0us; 16402us; 0us; 16403us; 0us; 16404us; 2us; 16405us; 10us; 55us; 11us; 57us; 0us; 16406us; 2us; 16407us; 10us; 55us; 11us; 57us; 0us; 16408us; 5us; 32768us; 6us; 66us; 8us; 56us; 9us; 58us; 10us; 55us; 11us; 57us; 7us; 32768us; 3us; 43us; 5us; 45us; 12us; 59us; 22us; 47us; 23us; 48us; 31us; 22us; 32us; 21us; 7us; 32768us; 3us; 43us; 5us; 45us; 12us; 59us; 22us; 47us; 23us; 48us; 31us; 22us; 32us; 21us; 7us; 32768us; 3us; 43us; 5us; 45us; 12us; 59us; 22us; 47us; 23us; 48us; 31us; 22us; 32us; 21us; 7us; 32768us; 3us; 43us; 5us; 45us; 12us; 59us; 22us; 47us; 23us; 48us; 31us; 22us; 32us; 21us; 7us; 32768us; 3us; 43us; 5us; 45us; 12us; 59us; 22us; 47us; 23us; 48us; 31us; 22us; 32us; 21us; 4us; 32768us; 3us; 43us; 5us; 44us; 31us; 22us; 32us; 21us; 4us; 32768us; 3us; 43us; 5us; 44us; 31us; 22us; 32us; 21us; 4us; 32768us; 3us; 43us; 5us; 44us; 31us; 22us; 32us; 21us; 4us; 32768us; 3us; 43us; 5us; 44us; 31us; 22us; 32us; 21us; 4us; 32768us; 3us; 43us; 5us; 44us; 31us; 22us; 32us; 21us; 4us; 32768us; 3us; 43us; 5us; 44us; 31us; 22us; 32us; 21us; 0us; 16415us; |]
+let _fsyacc_actionTableElements = [|4us; 32768us; 22us; 4us; 26us; 11us; 28us; 14us; 30us; 7us; 0us; 49152us; 2us; 32768us; 2us; 3us; 32us; 10us; 0us; 16385us; 1us; 32768us; 31us; 5us; 4us; 32768us; 0us; 44us; 19us; 43us; 22us; 22us; 23us; 21us; 5us; 16386us; 16us; 40us; 17us; 41us; 18us; 38us; 19us; 39us; 20us; 42us; 0us; 16387us; 1us; 16388us; 32us; 10us; 1us; 16391us; 32us; 10us; 4us; 32768us; 22us; 4us; 26us; 11us; 28us; 14us; 30us; 7us; 7us; 32768us; 0us; 45us; 9us; 47us; 10us; 48us; 11us; 59us; 19us; 43us; 22us; 22us; 23us; 21us; 2us; 32768us; 25us; 20us; 27us; 13us; 0us; 16389us; 7us; 32768us; 0us; 45us; 9us; 47us; 10us; 48us; 11us; 59us; 19us; 43us; 22us; 22us; 23us; 21us; 2us; 32768us; 25us; 20us; 29us; 16us; 0us; 16390us; 5us; 32768us; 12us; 55us; 13us; 56us; 14us; 58us; 15us; 57us; 24us; 18us; 4us; 32768us; 22us; 4us; 26us; 11us; 28us; 14us; 30us; 7us; 1us; 16392us; 25us; 20us; 7us; 32768us; 0us; 45us; 9us; 47us; 10us; 48us; 11us; 59us; 19us; 43us; 22us; 22us; 23us; 21us; 0us; 16393us; 0us; 16394us; 3us; 16395us; 16us; 40us; 17us; 41us; 20us; 42us; 3us; 16396us; 16us; 40us; 17us; 41us; 20us; 42us; 1us; 16397us; 20us; 42us; 1us; 16398us; 20us; 42us; 1us; 16399us; 20us; 42us; 0us; 16400us; 6us; 32768us; 1us; 46us; 16us; 40us; 17us; 41us; 18us; 38us; 19us; 39us; 20us; 42us; 12us; 32768us; 1us; 46us; 3us; 60us; 4us; 62us; 5us; 64us; 6us; 65us; 7us; 63us; 8us; 61us; 16us; 40us; 17us; 41us; 18us; 38us; 19us; 39us; 20us; 42us; 11us; 32768us; 3us; 60us; 4us; 62us; 5us; 64us; 6us; 65us; 7us; 63us; 8us; 61us; 16us; 40us; 17us; 41us; 18us; 38us; 19us; 39us; 20us; 42us; 5us; 16409us; 16us; 40us; 17us; 41us; 18us; 38us; 19us; 39us; 20us; 42us; 5us; 16410us; 16us; 40us; 17us; 41us; 18us; 38us; 19us; 39us; 20us; 42us; 5us; 16411us; 16us; 40us; 17us; 41us; 18us; 38us; 19us; 39us; 20us; 42us; 5us; 16412us; 16us; 40us; 17us; 41us; 18us; 38us; 19us; 39us; 20us; 42us; 5us; 16413us; 16us; 40us; 17us; 41us; 18us; 38us; 19us; 39us; 20us; 42us; 5us; 16414us; 16us; 40us; 17us; 41us; 18us; 38us; 19us; 39us; 20us; 42us; 4us; 32768us; 0us; 44us; 19us; 43us; 22us; 22us; 23us; 21us; 4us; 32768us; 0us; 44us; 19us; 43us; 22us; 22us; 23us; 21us; 4us; 32768us; 0us; 44us; 19us; 43us; 22us; 22us; 23us; 21us; 4us; 32768us; 0us; 44us; 19us; 43us; 22us; 22us; 23us; 21us; 4us; 32768us; 0us; 44us; 19us; 43us; 22us; 22us; 23us; 21us; 4us; 32768us; 0us; 44us; 19us; 43us; 22us; 22us; 23us; 21us; 4us; 32768us; 0us; 44us; 19us; 43us; 22us; 22us; 23us; 21us; 7us; 32768us; 0us; 45us; 9us; 47us; 10us; 48us; 11us; 59us; 19us; 43us; 22us; 22us; 23us; 21us; 0us; 16401us; 0us; 16402us; 0us; 16403us; 0us; 16404us; 2us; 16405us; 12us; 55us; 15us; 57us; 0us; 16406us; 2us; 16407us; 12us; 55us; 15us; 57us; 0us; 16408us; 5us; 32768us; 1us; 66us; 12us; 55us; 13us; 56us; 14us; 58us; 15us; 57us; 7us; 32768us; 0us; 45us; 9us; 47us; 10us; 48us; 11us; 59us; 19us; 43us; 22us; 22us; 23us; 21us; 7us; 32768us; 0us; 45us; 9us; 47us; 10us; 48us; 11us; 59us; 19us; 43us; 22us; 22us; 23us; 21us; 7us; 32768us; 0us; 45us; 9us; 47us; 10us; 48us; 11us; 59us; 19us; 43us; 22us; 22us; 23us; 21us; 7us; 32768us; 0us; 45us; 9us; 47us; 10us; 48us; 11us; 59us; 19us; 43us; 22us; 22us; 23us; 21us; 7us; 32768us; 0us; 45us; 9us; 47us; 10us; 48us; 11us; 59us; 19us; 43us; 22us; 22us; 23us; 21us; 4us; 32768us; 0us; 44us; 19us; 43us; 22us; 22us; 23us; 21us; 4us; 32768us; 0us; 44us; 19us; 43us; 22us; 22us; 23us; 21us; 4us; 32768us; 0us; 44us; 19us; 43us; 22us; 22us; 23us; 21us; 4us; 32768us; 0us; 44us; 19us; 43us; 22us; 22us; 23us; 21us; 4us; 32768us; 0us; 44us; 19us; 43us; 22us; 22us; 23us; 21us; 4us; 32768us; 0us; 44us; 19us; 43us; 22us; 22us; 23us; 21us; 0us; 16415us; |]
 let _fsyacc_actionTableRowOffsets = [|0us; 5us; 6us; 9us; 10us; 12us; 17us; 23us; 24us; 26us; 28us; 33us; 41us; 44us; 45us; 53us; 56us; 57us; 63us; 68us; 70us; 78us; 79us; 80us; 84us; 88us; 90us; 92us; 94us; 95us; 102us; 115us; 127us; 133us; 139us; 145us; 151us; 157us; 163us; 168us; 173us; 178us; 183us; 188us; 193us; 198us; 206us; 207us; 208us; 209us; 210us; 213us; 214us; 217us; 218us; 224us; 232us; 240us; 248us; 256us; 264us; 269us; 274us; 279us; 284us; 289us; 294us; |]
 let _fsyacc_reductionSymbolCounts = [|1us; 2us; 3us; 1us; 3us; 3us; 3us; 3us; 3us; 1us; 1us; 3us; 3us; 3us; 3us; 3us; 2us; 3us; 1us; 1us; 3us; 3us; 3us; 3us; 2us; 3us; 3us; 3us; 3us; 3us; 3us; 3us; |]
 let _fsyacc_productionToNonTerminalTable = [|0us; 1us; 2us; 2us; 2us; 2us; 2us; 3us; 3us; 4us; 4us; 4us; 4us; 4us; 4us; 4us; 4us; 4us; 5us; 5us; 5us; 5us; 5us; 5us; 5us; 5us; 5us; 5us; 5us; 5us; 5us; 5us; |]
@@ -305,10 +305,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 45 "GCL1Parser.fsp"
+# 52 "GCL1Parser.fsp"
                                                       _1 
                    )
-# 45 "GCL1Parser.fsp"
+# 52 "GCL1Parser.fsp"
                  : Command));
 # 313 "GCL1Parser.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -317,20 +317,20 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 48 "GCL1Parser.fsp"
+# 55 "GCL1Parser.fsp"
                                                               Ass(_1,_3) 
                    )
-# 48 "GCL1Parser.fsp"
+# 55 "GCL1Parser.fsp"
                  : Command));
 # 325 "GCL1Parser.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 49 "GCL1Parser.fsp"
+# 56 "GCL1Parser.fsp"
                                                                Skip 
                    )
-# 49 "GCL1Parser.fsp"
+# 56 "GCL1Parser.fsp"
                  : Command));
 # 335 "GCL1Parser.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -339,10 +339,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 50 "GCL1Parser.fsp"
+# 57 "GCL1Parser.fsp"
                                                                Commands(_1,_3) 
                    )
-# 50 "GCL1Parser.fsp"
+# 57 "GCL1Parser.fsp"
                  : Command));
 # 347 "GCL1Parser.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -350,10 +350,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 51 "GCL1Parser.fsp"
+# 58 "GCL1Parser.fsp"
                                                                If(_2) 
                    )
-# 51 "GCL1Parser.fsp"
+# 58 "GCL1Parser.fsp"
                  : Command));
 # 358 "GCL1Parser.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -361,10 +361,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 52 "GCL1Parser.fsp"
+# 59 "GCL1Parser.fsp"
                                                                Do(_2) 
                    )
-# 52 "GCL1Parser.fsp"
+# 59 "GCL1Parser.fsp"
                  : Command));
 # 369 "GCL1Parser.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -373,10 +373,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 56 "GCL1Parser.fsp"
+# 63 "GCL1Parser.fsp"
                                                                 GC(_1,_3) 
                    )
-# 56 "GCL1Parser.fsp"
+# 63 "GCL1Parser.fsp"
                  : GuardedCommand));
 # 381 "GCL1Parser.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -385,10 +385,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 57 "GCL1Parser.fsp"
+# 64 "GCL1Parser.fsp"
                                                                GCs(_1,_3) 
                    )
-# 57 "GCL1Parser.fsp"
+# 64 "GCL1Parser.fsp"
                  : GuardedCommand));
 # 393 "GCL1Parser.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -396,10 +396,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 61 "GCL1Parser.fsp"
+# 68 "GCL1Parser.fsp"
                                                                Num(_1) 
                    )
-# 61 "GCL1Parser.fsp"
+# 68 "GCL1Parser.fsp"
                  : AExpr));
 # 404 "GCL1Parser.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -407,10 +407,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 62 "GCL1Parser.fsp"
-                                                              Var(_1) 
+# 69 "GCL1Parser.fsp"
+                                                               Var(_1) 
                    )
-# 62 "GCL1Parser.fsp"
+# 69 "GCL1Parser.fsp"
                  : AExpr));
 # 415 "GCL1Parser.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -419,10 +419,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 63 "GCL1Parser.fsp"
+# 70 "GCL1Parser.fsp"
                                                                PlusExpr(_1,_3) 
                    )
-# 63 "GCL1Parser.fsp"
+# 70 "GCL1Parser.fsp"
                  : AExpr));
 # 427 "GCL1Parser.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -431,10 +431,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 64 "GCL1Parser.fsp"
+# 71 "GCL1Parser.fsp"
                                                                MinusExpr(_1,_3) 
                    )
-# 64 "GCL1Parser.fsp"
+# 71 "GCL1Parser.fsp"
                  : AExpr));
 # 439 "GCL1Parser.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -443,10 +443,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 65 "GCL1Parser.fsp"
+# 72 "GCL1Parser.fsp"
                                                                TimesExpr(_1,_3) 
                    )
-# 65 "GCL1Parser.fsp"
+# 72 "GCL1Parser.fsp"
                  : AExpr));
 # 451 "GCL1Parser.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -455,10 +455,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 66 "GCL1Parser.fsp"
+# 73 "GCL1Parser.fsp"
                                                                DivExpr(_1,_3) 
                    )
-# 66 "GCL1Parser.fsp"
+# 73 "GCL1Parser.fsp"
                  : AExpr));
 # 463 "GCL1Parser.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -467,10 +467,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 67 "GCL1Parser.fsp"
+# 74 "GCL1Parser.fsp"
                                                                PowExpr(_1,_3) 
                    )
-# 67 "GCL1Parser.fsp"
+# 74 "GCL1Parser.fsp"
                  : AExpr));
 # 475 "GCL1Parser.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -478,10 +478,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 68 "GCL1Parser.fsp"
+# 75 "GCL1Parser.fsp"
                                                                Neg(_2) 
                    )
-# 68 "GCL1Parser.fsp"
+# 75 "GCL1Parser.fsp"
                  : AExpr));
 # 486 "GCL1Parser.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -489,30 +489,30 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 69 "GCL1Parser.fsp"
+# 76 "GCL1Parser.fsp"
                                                                _2 
                    )
-# 69 "GCL1Parser.fsp"
+# 76 "GCL1Parser.fsp"
                  : AExpr));
 # 497 "GCL1Parser.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 74 "GCL1Parser.fsp"
+# 81 "GCL1Parser.fsp"
                                                                Bool(true) 
                    )
-# 74 "GCL1Parser.fsp"
+# 81 "GCL1Parser.fsp"
                  : BExpr));
 # 507 "GCL1Parser.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 75 "GCL1Parser.fsp"
+# 82 "GCL1Parser.fsp"
                                                                Bool(false) 
                    )
-# 75 "GCL1Parser.fsp"
+# 82 "GCL1Parser.fsp"
                  : BExpr));
 # 517 "GCL1Parser.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -521,10 +521,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 76 "GCL1Parser.fsp"
+# 83 "GCL1Parser.fsp"
                                                                And(_1,_3) 
                    )
-# 76 "GCL1Parser.fsp"
+# 83 "GCL1Parser.fsp"
                  : BExpr));
 # 529 "GCL1Parser.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -533,10 +533,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 77 "GCL1Parser.fsp"
+# 84 "GCL1Parser.fsp"
                                                                Or(_1,_3) 
                    )
-# 77 "GCL1Parser.fsp"
+# 84 "GCL1Parser.fsp"
                  : BExpr));
 # 541 "GCL1Parser.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -545,10 +545,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 78 "GCL1Parser.fsp"
+# 85 "GCL1Parser.fsp"
                                                                Sand(_1,_3) 
                    )
-# 78 "GCL1Parser.fsp"
+# 85 "GCL1Parser.fsp"
                  : BExpr));
 # 553 "GCL1Parser.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -557,10 +557,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 79 "GCL1Parser.fsp"
+# 86 "GCL1Parser.fsp"
                                                                Sor(_1,_3) 
                    )
-# 79 "GCL1Parser.fsp"
+# 86 "GCL1Parser.fsp"
                  : BExpr));
 # 565 "GCL1Parser.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -568,10 +568,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 80 "GCL1Parser.fsp"
+# 87 "GCL1Parser.fsp"
                                                                Not(_2) 
                    )
-# 80 "GCL1Parser.fsp"
+# 87 "GCL1Parser.fsp"
                  : BExpr));
 # 576 "GCL1Parser.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -580,10 +580,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 81 "GCL1Parser.fsp"
+# 88 "GCL1Parser.fsp"
                                                                Eq(_1,_3) 
                    )
-# 81 "GCL1Parser.fsp"
+# 88 "GCL1Parser.fsp"
                  : BExpr));
 # 588 "GCL1Parser.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -592,10 +592,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 82 "GCL1Parser.fsp"
+# 89 "GCL1Parser.fsp"
                                                                Neq(_1,_3) 
                    )
-# 82 "GCL1Parser.fsp"
+# 89 "GCL1Parser.fsp"
                  : BExpr));
 # 600 "GCL1Parser.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -604,10 +604,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 83 "GCL1Parser.fsp"
+# 90 "GCL1Parser.fsp"
                                                                Gt(_1,_3) 
                    )
-# 83 "GCL1Parser.fsp"
+# 90 "GCL1Parser.fsp"
                  : BExpr));
 # 612 "GCL1Parser.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -616,10 +616,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 84 "GCL1Parser.fsp"
+# 91 "GCL1Parser.fsp"
                                                                Gte(_1,_3) 
                    )
-# 84 "GCL1Parser.fsp"
+# 91 "GCL1Parser.fsp"
                  : BExpr));
 # 624 "GCL1Parser.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -628,10 +628,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 85 "GCL1Parser.fsp"
+# 92 "GCL1Parser.fsp"
                                                                Lt(_1,_3) 
                    )
-# 85 "GCL1Parser.fsp"
+# 92 "GCL1Parser.fsp"
                  : BExpr));
 # 636 "GCL1Parser.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -640,10 +640,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 86 "GCL1Parser.fsp"
+# 93 "GCL1Parser.fsp"
                                                                Lte(_1,_3) 
                    )
-# 86 "GCL1Parser.fsp"
+# 93 "GCL1Parser.fsp"
                  : BExpr));
 # 648 "GCL1Parser.fs"
         (fun (parseState : FSharp.Text.Parsing.IParseState) ->
@@ -651,10 +651,10 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 87 "GCL1Parser.fsp"
+# 94 "GCL1Parser.fsp"
                                                                _2 
                    )
-# 87 "GCL1Parser.fsp"
+# 94 "GCL1Parser.fsp"
                  : BExpr));
 |]
 # 660 "GCL1Parser.fs"

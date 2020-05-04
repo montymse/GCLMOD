@@ -13,43 +13,56 @@ let digit       = ['0'-'9']
 let num         = digit+
 let whitespace  = [' ' '\u00A0' '\r' '\n' '\t']+
 let alfabet     = ['A'-'Z''a'-'z']
-let var         = alfabet(alfabet|digit)*
+let var         = ['a' - 'z''A' - 'Z']['a' - 'z''A' - 'Z''_''0' - '9']* //alfabet(alfabet|digit)*
 
 //Tokens
 rule tokenize = parse
 | whitespace        { tokenize lexbuf}
+
+//Arithmetics
 | '*'                      { TIMES }
 | '/'                      { DIV }
 | '+'                      { PLUS }
 | '-'                      { MINUS }
 | '^'                      { POW }
+| "-"                      { UNARY }
+
+//Parenthesis
 | '('                      { LPAR }
 | ')'                      { RPAR }
-| '='                      { EQ }
-| '|'                      { OR }
+
+//Boolean
+| "true"                   { TRUE }
+| "false"                  { FALSE }
 | "||"                     { SOR }
-| '&'                      { AND }
 | "&&"                     { SAND }
-| '!'                      { NOT }
-| ":="                     { ASS }
-| '>'                      { GT }
-| '<'                      { LT }
-| ';'                      { SC }
-| "->"                     { ARR }
-| "[]"                     { SB }
 | "!="                     { NEQ }
 | "<="                     { LTE }
 | ">="                     { GTE }
-| "true"                   { TRUE }
-| "false"                  { FALSE }
+| '&'                      { AND }
+| '|'                      { OR }
+| '!'                      { NOT }
+| '='                      { EQ }
+| '>'                      { GT }
+| '<'                      { LT }
+
+//GC
+| "->"                     { ARR }
+| "[]"                     { SB }
+
+
+//COMMAND
+| ';'                      { SC }
+| ":="                     { ASS }
 | "if" whitespace          { IF }
-| "if"                     { FAIL }
 | whitespace"fi"           { FI }
 | "do" whitespace          { DO }
-| "do"                     { FAIL }
 | whitespace "od"          { OD }
 | "skip"                   { SKIP }
-| "-"
+
+//NUM & VAR
 | num                      { NUM(Double.Parse(LexBuffer<_>.LexemeString lexbuf))}
 | var                      { VAR(string(LexBuffer<_>.LexemeString lexbuf)) }
+
+//EOF
 | eof                      { EOF }

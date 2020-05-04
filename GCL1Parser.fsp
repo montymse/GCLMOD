@@ -10,9 +10,15 @@
     open GCL1TypeAST
 %}
 
-%token <float> NUM
-%token <string> VAR
-%token TIMES DIV PLUS MINUS POW LPAR RPAR EQ OR SOR AND SAND NOT ASS GT LT SC ARR SB NEQ LTE GTE TRUE FALSE IF FAIL FI DO OD SKIP EOF
+%token IF FI DO OD SKIP ASS SC           //Commands
+%token ARR SB                            //GC
+%token <float> NUM                       //Number 
+%token <string> VAR                      //Variable
+%token TIMES DIV PLUS MINUS POW UNARY    //Arithmetic
+%token TRUE FALSE NOT AND OR SOR SAND    //Boolean
+%token EQ GT LT LTE GTE NEQ
+%token LPAR RPAR EOF 
+
 
 //Arithmetic expressions precedence from low to high.
 %left PLUS MINUS
@@ -31,7 +37,8 @@
 %start start
 
 // We specify the return type of each of then non-terminal symbols
-%type <Command> start command
+%type <Command> start 
+%type <Command> command
 %type <GuardedCommand> gc
 %type <AExpr> aexpression
 %type <BExpr> bexpression
@@ -59,7 +66,7 @@ gc:
 // a ::= n | x | a + a | a - a | a * a | a / a | a ^ a | (a)
 aexpression:
       NUM                               { Num($1) }
-    | VAR                              { Var($1) }
+    | VAR                               { Var($1) }
     | aexpression PLUS aexpression      { PlusExpr($1,$3) }
     | aexpression MINUS aexpression     { MinusExpr($1,$3) }
     | aexpression TIMES aexpression     { TimesExpr($1,$3) }
