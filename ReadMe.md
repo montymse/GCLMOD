@@ -1,4 +1,3 @@
-https://github.com/rasmusmm/datamod
 
 In order to generate the lexer run the following command:
 

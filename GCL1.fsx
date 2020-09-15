@@ -1,4 +1,4 @@
-(*Rasmus s164162, Solvi s174391, Muse s194615*)
+(*Muse s194615*)
 
 // With this script we implements our Parser
 

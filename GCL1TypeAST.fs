@@ -1,4 +1,4 @@
-(*Rasmus s164162, Solvi s174391, Muse s194615*)
+(*Muse s194615*)
 
 // This file implements a module where we define a data type "expr"
 // to store represent arithmetic expressions
