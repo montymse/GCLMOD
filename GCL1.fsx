@@ -77,7 +77,6 @@ and printSignLists (results:(int * (string *string) list) list) =
     | []                -> printfn "\n"
 
 
-
 (*----------------------THE EVALUATOR------------------------*)
 
 type Operation = 
@@ -121,7 +120,7 @@ and evalGCend (gc:GuardedCommand) (start:int) (endState:int) =
                             [start,Boolean(endState,Not(b1))]
 
 
-let rec GAExpr (aexpr:AExpr) (varMap:Map<string,float>) =
+let rec GAExpr (aexpr:AExpr) (varMap:Map<string,float>) = 
     match aexpr with
     | Var (s)                   -> if varMap.ContainsKey s then Map.find s varMap else failwith (string(s)+" not_found")
     | Num (num)                 -> num
@@ -131,6 +130,7 @@ let rec GAExpr (aexpr:AExpr) (varMap:Map<string,float>) =
     | MinusExpr(ex1,ex2)        -> (GAExpr ex1 varMap - GAExpr ex2 varMap)
     | PowExpr(ex1,ex2)          -> (GAExpr ex1 varMap ** GAExpr ex2 varMap)
     | Neg(ex1)                  -> -(GAExpr ex1 varMap)
+
 
 let rec GBExpr (bexpr:BExpr) varMap =
     match bexpr with
@@ -167,13 +167,14 @@ let rec printVarlist list =
 let rec Interpreter (currentNode:int) n (graph:OperationList) (varMap:Map<string,float>) (programSteps:int) (signs:(int * (string *string) list) list) (oplist) =
     match graph with
     | (s,op)::_ when n <= 0              -> 
-                                            printVars (signAnalyzer (Map.toList varMap) [])
-                                            printSignLists signs
-                                            //printSignLists [(programSteps,signAnalyzer (Map.toList varMap) [])]
-
+                                         //   printVars (signAnalyzer (Map.toList varMap) [])
+                                            
+                                          //  printSignLists signs
                                             printfn "%s" ("Ran out of programSteps. Status: " + "\n" + (printVarlist (Map.toList varMap)))                           
     | (s,op)::tail when s <> currentNode -> 
+                                           
                                             Interpreter currentNode n tail varMap programSteps (signs) oplist
+
     | (s,op)::tail when s = currentNode  ->     
                                             let st=[(programSteps,signAnalyzer (Map.toList varMap) [])]
                                             match op with
@@ -181,16 +182,64 @@ let rec Interpreter (currentNode:int) n (graph:OperationList) (varMap:Map<string
                                                                          Interpreter s (n-1) oplist varMap programSteps (signs@st) oplist 
                                                                        else
                                                                          Interpreter currentNode n tail varMap programSteps (signs@st) oplist
-                                            | Assign(s,(var,ex))    -> Interpreter s (n-1) oplist (varMap.Add(var,(GAExpr ex varMap))) programSteps (signs@st) oplist
+                                            | Assign(s,(var,ex))    ->
+                                                                       Interpreter s (n-1) oplist (varMap.Add(var,(GAExpr ex varMap))) programSteps (signs@st) oplist
                                             | SkipCMD(s)            -> Interpreter s (n-1) oplist varMap programSteps (signs@st) oplist
     | _                                  -> 
-                                            printVars (signAnalyzer (Map.toList varMap) [])
-                                            printSignLists signs
-                                            // printSignLists [(programSteps,signAnalyzer (Map.toList varMap) [])]
-                                            //let str=(signAnalyzer (Map.toList varMap) 
-                                            //(combinations [] List.length str)
+                                          //  printVars (signAnalyzer (Map.toList varMap) [])
+                                          //  printSignLists signs
                                             printfn "%s" ("Terminated in " + string(programSteps-n) + "\n" + (printVarlist (Map.toList varMap)))
                                             
+
+(*---------------------THE SIGN ANALYSIS PART 2---------------------*)
+
+let rec signs (aexpr:AExpr) (varSigns:Map<string,string>) : string = 
+    match aexpr with
+    | Var (s)                   -> if varSigns.ContainsKey s then Map.find s varSigns else failwith (string(s)+" not_found")
+
+    | Num (num)                 -> match num with   
+                                    | x when x>0.0 -> "+"
+                                    | x when x<0.0 -> "-"
+                                    | _ -> "0"
+
+    | TimesExpr(ex1,ex2)        ->  if (((signs ex1 varSigns)="0") || ((signs ex2 varSigns)="0")) then "0" 
+                                    else if ((signs ex1 varSigns)="-") && ((signs ex2 varSigns)="-") then "+"
+                                    else if ((signs ex1 varSigns)="+") && ((signs ex2 varSigns)="-") || ((signs ex1 varSigns)="-") && ((signs ex2 varSigns)="+") then "-"
+                                    else "+"
+
+    | DivExpr(ex1,ex2)          ->  if ((signs ex1 varSigns)="0")  then "0" 
+                                    else if (((signs ex1 varSigns)="-") && ((signs ex2 varSigns)="-")) then "+"
+                                    else if (((signs ex1 varSigns)="+") && ((signs ex2 varSigns)="-") || ((signs ex1 varSigns)="-") && ((signs ex2 varSigns)="+")) then "-"
+                                    else "+"
+                                    
+    | PlusExpr(ex1,ex2)         ->  if (((signs ex1 varSigns)="+") && ((signs ex2 varSigns)="+")) then "+"
+                                    else if (((signs ex1 varSigns)="+") && ((signs ex2 varSigns)="0")) then "+"
+                                    else if (((signs ex1 varSigns)="0") && ((signs ex2 varSigns)="+")) then "+"
+                                    else if (((signs ex1 varSigns)="0") && ((signs ex2 varSigns)="-")) then "-"
+                                    else if (((signs ex1 varSigns)="-") && ((signs ex2 varSigns)="0")) then "-"
+                                    else if (((signs ex1 varSigns)="+") && ((signs ex2 varSigns)="-")) then "-0+"
+                                    else "-0+"  
+
+    | MinusExpr(ex1,ex2)        ->  if (((signs ex1 varSigns)="+") && ((signs ex2 varSigns)="+")) then "-0+"
+                                    else if (((signs ex1 varSigns)="+") && ((signs ex2 varSigns)="0")) then "+"
+                                    else if (((signs ex1 varSigns)="0") && ((signs ex2 varSigns)="+")) then "-"
+                                    else if (((signs ex1 varSigns)="0") && ((signs ex2 varSigns)="-")) then "+"
+                                    else if (((signs ex1 varSigns)="-") && ((signs ex2 varSigns)="0")) then "-"
+                                    else if (((signs ex1 varSigns)="+") && ((signs ex2 varSigns)="-")) then "+"
+                                    else "+-0"
+
+    | PowExpr(ex1,ex2)          ->  if (((signs ex1 varSigns)="+") && ((signs ex2 varSigns)="+")) then "+"
+                                    else if (((signs ex1 varSigns)="+") && ((signs ex2 varSigns)="-")) then "+"
+                                    else if (((signs ex1 varSigns)="-") && ((signs ex2 varSigns)="+")) then "-+"
+                                    else if (((signs ex1 varSigns)="-") && ((signs ex2 varSigns)="-")) then "-"
+                                    else if (((signs ex1 varSigns)="0") && ((signs ex2 varSigns)="+")) then "0"
+                                    else if (((signs ex1 varSigns)="-") && ((signs ex2 varSigns)="0")) then "+"
+                                    else "+"
+
+    
+    | Neg(ex1)                  ->  if ((signs ex1 varSigns)="+") then "-" else "+"     //???????
+
+
 (*---------------------THE SECURITY ANALYSIS---------------------*)
 
 ///<summary>
@@ -250,63 +299,61 @@ let matchstring (strMatch:string) =
 
 let rec Assignmatch (x:string) (str:string list) =
     match str with
-        | y::ys -> (y.Replace("Var ", ""),(y.Replace("Var ", "")))::(y.Replace("Var ", ""),(x.Replace("Var ", "")))::(Assignmatch x ys)
-        | [] -> [(x.Replace("Var ", ""),x.Replace("Var ", ""))]
-
-let rec Boolmatch str str1 =
-    match str with 
-        | y::ys -> (Assignmatch y str1)@(Boolmatch ys str1)
-        | [] -> []    
-
-
-let ActualGenerator (graph:Operation) =                                 
-    match graph with    
-        | Assign(_,(x,expr)) ->  (Assignmatch (x) (matchstring (string(expr)))) 
-                        
-        | Boolean(_,expr) -> match expr with
-                                | Eq (e1,e2) | Neq (e1,e2) | Gt (e1,e2) | Gte (e1,e2) | Lte (e1,e2) | Lt (e1,e2) -> 
-                                       (Boolmatch (matchstring (string(e1))) (matchstring (string(e2))))    
-                                | _ -> []
-        | SkipCMD _ -> []
-
-let rec searchBool (graph:OperationList) (num:int) =
-      match graph with 
-        | (i,Boolean(_))::xs when i=num   -> []
-        | (i,Boolean(x,y))::xs when i<>num-> (Boolean(x,y))::(searchBool xs num)
-        |  (a,b)::xs                      -> b::(searchBool xs num)
-        | []                              -> []
-
-let rec Listelm = function
-    | (a,b)::tail -> a::b::(Listelm tail)
-    | [] -> []
-let rec matchListelm  elm list = 
-    match list with
-        | x::xs -> (elm,x)::(matchListelm elm xs)
-        | [] -> []
-let rec matchListList fromlist tolist =
-    match (fromlist) with
-        | x::xs -> (matchListelm x (Listelm tolist))@(matchListList xs tolist)
+        | y::ys -> (y.Replace("Var ", ""),(x.Replace("Var ", "")))::(Assignmatch x ys)
         | [] -> []
 
-let rec evaloplist = function
-    | x::xs -> (ActualGenerator  x)@(evaloplist xs)
-    | [] -> []
+let rec BoolActualGenerator (graphlist:OperationList) (e1: string) (e2: string)=
+    
+    match graphlist with
+        | (num,op)::xs -> 
+                          match op with                           
+                            | Assign(_,(x,expr)) -> (Assignmatch x (matchstring e1))@(Assignmatch x (matchstring e2))@BoolActualGenerator xs e1 e2 
+                            | Boolean(_,expr) -> BoolActualGenerator xs e1 e2
+                            | SkipCMD(_) -> BoolActualGenerator xs e1 e2
+        | [] -> []
 
-let rec findnum num res = function
-    | (i,op)::xs when num=i -> res@xs
-    | (i,op)::xs -> findnum num (res@[(i,op)]) xs
-    | [] -> res
-
-let rec Actual (graph:OperationList) =
+let rec Actual (graph:OperationList) = 
     match graph with
         | (num,op)::xs -> match op with
-                           | Assign(_) ->  (ActualGenerator op)@(Actual xs)              
-                           | Boolean(_) -> (ActualGenerator op)@(matchListList (Listelm (ActualGenerator ((op)))) (evaloplist (searchBool xs num)))@(Actual (findnum num [] xs))
-                           | SkipCMD(_) -> (Actual xs)    
-
+                            | Assign(_,(x,expr)) -> (Assignmatch (x) (matchstring (string(expr))))@(Actual xs) 
+                            | Boolean(_,expr) -> match expr with
+                                                 | Eq (e1,e2) | Neq (e1,e2) | Gt (e1,e2) | Gte (e1,e2) | Lte (e1,e2) | Lt (e1,e2) -> 
+                                                    (BoolActualGenerator graph (string(e1))  (string(e2)))@(Actual xs) 
+                                                 | _ -> (Actual xs) 
+                            | SkipCMD(_) -> (Actual xs) 
         | [] -> []
 
+(*----------------------MODEL CHECKING---------------------*)
+let rec Reach1 state (graphlist:OperationList) = 
+    match graphlist with    
+        | (x,op)::xs when x=state -> match op with
+                                        | Assign(n,_) -> n::(Reach1 state xs)
+                                        | Boolean(n,_) -> n::(Reach1 state xs)
+                                        | SkipCMD(n) -> n::(Reach1 state xs)
+        | (x,op)::xs -> (Reach1 state xs)
+        | [] -> []
 
+let ModelCheckGCL (graphlist: OperationList) =
+    let mutable Visited = []
+    let mutable ToExplore = [fst (graphlist.Head)]
+    while (not ToExplore.IsEmpty) do 
+        let s=ToExplore.Head
+        //printfn "s: %A" s
+        if (List.exists (fun elem -> elem = s) Visited) then 
+            ToExplore <- ToExplore.Tail
+        else 
+            ToExplore <- ToExplore.Tail
+            Visited   <- s::Visited
+            let Reachstate=(Reach1 s graphlist)
+            //printfn "%A" Reachstate
+            if (s=(-1)) then printfn "Only 'Stuck state' is %A, which is the final state" s 
+            if  Reachstate.IsEmpty && not (s=(-1))  then 
+                printfn "Stuck state for state %A" s 
+            else    
+                for elm in Reachstate do 
+                    ToExplore <- elm::ToExplore
+               // printfn "Toexp: %A" ToExplore
+    //printfn "Visited: %A" Visited
 
 (*---------------------THE GCL PROGRAM---------------------*)
 
@@ -323,64 +370,71 @@ let rec Actual (graph:OperationList) =
 ///</remarks>
 let GCL =  
     //GCL program read from file
-    //printf "Input a string: "
-    //let input = (Console.ReadLine())
     let input = File.ReadAllText("TestFile1.txt")
 
     //Initial node qi
     let qi = 0
     //Number of programSteps
-    printfn"Choose number of programSteps:"
-    //let programSteps = int (Console.ReadLine())
-    let programSteps = 20
+    let programSteps = 35
     
-    //Variable number (IF MORE VARIABLES NEEDED ADD HERE  )  
-    let varMap = Map.empty.Add("x",2.0)
-    printf "\n----------------------------\nInput program:\n\n%s\n----------------------------\n" input
+    //Variable number (IF MORE VARIABLES NEEDED ADD HERE)  
+    let varMap = Map.empty.Add("x",1.0).Add("y",1.0)
 
+    let varSigns = Map.empty.Add("x","+").Add("y","+")
 
     //Security Lattice (CHANGE IF NEEDED e.g. low<high or trusted<dubious)
     let securityLattice="public<private"
     //Security classification
     let varSec= Map.empty.Add("x","private").Add("y","public")
 
-    //Allowed security status
-    let sst= (Map.toList varSec)
-    let noallowed=(notAllowed sst securityLattice [])
-    let possib=(permutations (Varlist sst []) [])
-
-    let allowed= Allowed noallowed possib
+    printf "\n----------------------------\nInput program:\n\n%s\n----------------------------\n" input
 
     try
-       let programGCL  = parse (input)
-       let oplist = (evalC programGCL 0 (-1))
-       let pg = ProgramGraph (programGCL)
-       let wr = new System.IO.StreamWriter("graph.gv")
-       wr.Write pg
-       wr.Close() 
+        //Allowed security status
+        let sst= (Map.toList varSec)
+        let noallowed=(notAllowed sst securityLattice [])
+        let possib=(permutations (Varlist sst []) [])
 
-       //Actual security status
-       let acc = List.distinct (Actual oplist)
-       
-       //Violations in security
-       let violations=Difflist (Allowed acc allowed)
+        let allowed= Allowed noallowed possib
+
+        //Parse program 
+
+        let programGCL  = parse (input)
+        let oplist = (evalC programGCL 0 (-1))
+        let pg = ProgramGraph (programGCL)
+        let wr = new System.IO.StreamWriter("graphdraw.gv")
+        wr.Write pg
+        wr.Close() 
+
+       // for elm in oplist do
+       //     printfn "%A" elm
+
+        //MODEL CHECKING
+        printfn"MODEL CHECKING"
+        ModelCheckGCL oplist
+        printfn"\n"
 
     
-       //Result security
-       let securegcl= if (List.isEmpty violations) then "secure" else "not secure"
+        //Actual security status
+        let acc = List.distinct (Actual oplist)
+        //Violations in security
+        let violations=Difflist (Allowed allowed acc)
+        //Result security
+        let securegcl= if (List.isEmpty violations) then "secure" else "not secure"
 
-       (Interpreter qi programSteps oplist varMap programSteps [] oplist)
+        printf "----------------------------\n"
 
-       printfn"Allowed   : %A" (printlist allowed)
-       printfn"Actual    : %A" (printlist acc)
-       printfn"Violations: %A" (printlist violations)
-       printfn""
-       printfn"Result    : %A" (securegcl)
-       printfn""
-       printf "----------------------------\nProgram accepted!\n----------------------------\n"
-     
+        (Interpreter qi programSteps oplist varMap programSteps [] oplist)
+
+        printf "----------------------------\n"
+        printfn"SECURITY ANALYSIS"
+        printfn"Actual    : %A" (printlist acc)
+        printfn"Allowed   : %A" (printlist allowed)
+        printfn"Violations: %A" (printlist violations)
+        printfn""
+        printfn"Result    : %A" (securegcl)
+        printfn""
+        printf "----------------------------\nProgram accepted!\n----------------------------\n"
+
     with err -> 
         printf "Program rejected!\n"
-
-
-         

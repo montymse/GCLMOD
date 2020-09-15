@@ -149,7 +149,7 @@ node [shape = circle]\n"
 // footer taken from http://www.formalmethods.dk/fm4fun/ (export graph)
 let footer = "}"
 
-// definition of program which will be read by GCL.fsx. This will construct a program with
+// definition of program which will be read by GCL1.fsx. This will construct a program with
 // a header, transitions and footer. The structure is: 
 ///////////////////HEADER////////////////////////
 //              digraph program_graph {rankdir=LR;
